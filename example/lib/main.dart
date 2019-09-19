@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
 
@@ -13,6 +13,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
+  String textBtn = "Play";
+  bool recording = false;
 
   @override
   void initState() {
@@ -24,6 +26,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
+
     try {
       platformVersion = await FlutterScreenRecording.platformVersion;
     } on PlatformException {
@@ -50,7 +53,32 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: Text('Running on: $_platformVersion\n'),
         ),
+        floatingActionButton: FloatingActionButton(
+          child: Text('$textBtn'),
+          onPressed: () {
+            recording = !recording;
+            textBtn = (recording) ? "Stop" : "Play";
+
+            if (!recording) {
+              stopScreenRecord();
+            } else {
+              startScreenRecord();
+            }
+            setState(() {});
+          },
+        ),
       ),
     );
+  }
+
+  startScreenRecord() async {
+    String path = await FlutterScreenRecording.startRecordScreen;
+    print("qqqwerrtty");
+    print(path);
+  }
+
+  stopScreenRecord() async {
+    await FlutterScreenRecording.stopRecordScreen;
+    print("stopScreenRecord");
   }
 }
