@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
+import 'package:quiver/async.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,6 +16,7 @@ class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   String textBtn = "Play";
   bool recording = false;
+  int _time = 0;
 
   @override
   void initState() {
@@ -33,6 +35,7 @@ class _MyAppState extends State<MyApp> {
       platformVersion = 'Failed to get platform version.';
     }
 
+    startTimer();
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
@@ -43,6 +46,25 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void startTimer() {
+    CountdownTimer countDownTimer = new CountdownTimer(
+      new Duration(seconds: 1000),
+      new Duration(seconds: 1),
+    );
+
+    var sub = countDownTimer.listen(null);
+    sub.onData((duration) {
+      setState(() {
+        _time++;
+      });
+    });
+
+    sub.onDone(() {
+      print("Done");
+      sub.cancel();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -50,8 +72,11 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: Column(
+          children: <Widget>[
+            Text('Running on: $_platformVersion\n'),
+            Text('Time: $_time\n'),
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           child: Text('$textBtn'),

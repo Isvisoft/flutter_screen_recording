@@ -39,7 +39,7 @@ let screenSize = UIScreen.main.bounds
     @objc func startRecording() {
         //Use ReplayKit to record the screen
 
-        var videoName = String(Date().timeIntervalSince1970) + ".mp4"
+        let videoName = String(Date().timeIntervalSince1970) + ".mp4"
         
         //Create the file path to write to
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
