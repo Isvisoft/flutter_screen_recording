@@ -1,13 +1,18 @@
 import Flutter
 import UIKit
 import ReplayKit
+import Photos
 
 public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
     
- let recorder = RPScreenRecorder.shared()
- var videoOutputURL : URL
-    var  videoWriter : AVAssetWriter?
+let recorder = RPScreenRecorder.shared()
 
+var videoOutputURL : URL?
+var videoWriter : AVAssetWriter?
+var videoWriterInput : AVAssetWriterInput?
+
+let screenSize = UIScreen.main.bounds
+    
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "flutter_screen_recording", binaryMessenger: registrar.messenger())
     let instance = SwiftFlutterScreenRecordingPlugin()
@@ -22,30 +27,32 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
         result("iOS " + UIDevice.current.systemVersion)
 
     }else if(call.method == "startRecordScreen"){
-        startRecording()
+         startRecording()
 
     }else if(call.method == "stopRecordScreen"){
-    stopRecording()
+         stopRecording()
 
     }
   }
 
 
-    @objc func startRecording2() {
+    @objc func startRecording() {
         //Use ReplayKit to record the screen
 
+        var videoName = String(Date().timeIntervalSince1970) + ".mp4"
+        
         //Create the file path to write to
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
-        self.videoOutputURL = URL(fileURLWithPath: documentsPath.appendingPathComponent("MyVideo.mp4"))
+        self.videoOutputURL = URL(fileURLWithPath: documentsPath.appendingPathComponent(videoName))
 
         //Check the file does not already exist by deleting it if it does
         do {
-            try FileManager.default.removeItem(at: videoOutputURL)
+            try FileManager.default.removeItem(at: videoOutputURL!)
         } catch {}
 
 
         do {
-            try videoWriter = AVAssetWriter(outputURL: videoOutputURL, fileType: AVFileType.mp4)
+            try videoWriter = AVAssetWriter(outputURL: videoOutputURL!, fileType: AVFileType.mp4)
         } catch let writerError as NSError {
             print("Error opening video file", writerError);
             videoWriter = nil;
@@ -56,18 +63,19 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
         if #available(iOS 11.0, *) {
             let videoSettings: [String : Any] = [
                 AVVideoCodecKey  : AVVideoCodecType.h264,
-                AVVideoWidthKey  : 1920,  //Replace as you need
-                AVVideoHeightKey : 1080   //Replace as you need
+                AVVideoWidthKey  : screenSize.width,
+                AVVideoHeightKey : screenSize.height
             ]
-        } else {
-            // Fallback on earlier versions
-        }
+        
 
         //Create the asset writer input object whihc is actually used to write out the video
         //with the video settings we have created
-        AVAssetWriterInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings);
-        videoWriter.add(AVAssetWriterInput);
+        videoWriterInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings);
+            videoWriter?.add(videoWriterInput!);
 
+        }
+        
+        
         //Tell the screen recorder to start capturing and to call the handler when it has a
         //sample 
         if #available(iOS 11.0, *) {
@@ -79,22 +87,25 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
                     return;
                 }
                 
+                print("rpSampleType")
+                print(rpSampleType)
+
                 switch rpSampleType {
                 case RPSampleBufferType.video:
                     print("writing sample....");
-                    if self.videoWriter.status == AVAssetWriter.Status.unknown {
+                    if self.videoWriter?.status == AVAssetWriter.Status.unknown {
                         
-                        if (( self.videoWriter.startWriting ) != nil) {
+                        if (( self.videoWriter?.startWriting ) != nil) {
                             print("Starting writing");
-                            self.videoWriter.startWriting()
-                            self.videoWriter.startSession(atSourceTime:  CMSampleBufferGetPresentationTimeStamp(cmSampleBuffer))
+                            self.videoWriter?.startWriting()
+                            self.videoWriter?.startSession(atSourceTime:  CMSampleBufferGetPresentationTimeStamp(cmSampleBuffer))
                         }
                     }
                     
-                    if self.videoWriter.status == AVAssetWriter.Status.writing {
-                        if (self.videoWriterInput.isReadyForMoreMediaData == true) {
+                    if self.videoWriter?.status == AVAssetWriter.Status.writing {
+                        if (self.videoWriterInput?.isReadyForMoreMediaData == true) {
                             print("Writting a sample");
-                            if  self.videoWriterInput.append(cmSampleBuffer) == false {
+                            if  self.videoWriterInput?.append(cmSampleBuffer) == false {
                                 print(" we have a problem writing video")
                             }
                         }
@@ -105,33 +116,33 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
                 }
             } )
         } else {
-            // Fallback on earlier versions
+            //Fallback on earlier versions
         }
     }
 
-    @objc func stoprecording2() {
+    @objc func stopRecording() {
         //Stop Recording the screen
         if #available(iOS 11.0, *) {
             RPScreenRecorder.shared().stopCapture( handler: { (error) in
                 print("stopping recording");
             })
         } else {
-            // Fallback on earlier versions
+          //  Fallback on earlier versions
         }
 
-        self.videoWriterInput.markAsFinished();
-        self.videoWriter.finishWriting {
+        self.videoWriterInput?.markAsFinished();
+        self.videoWriter?.finishWriting {
             print("finished writing video");
 
             //Now save the video
             PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: self.videoOutputURL)
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: self.videoOutputURL!)
             }) { saved, error in
                 if saved {
                     let alertController = UIAlertController(title: "Your video was successfully saved", message: nil, preferredStyle: .alert)
                     let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                     alertController.addAction(defaultAction)
-                    self.present(alertController, animated: true, completion: nil)
+                    //self.present(alertController, animated: true, completion: nil)
                 }
                 if error != nil {
                     print("Video did not save for some reason", error.debugDescription);
@@ -142,78 +153,4 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
     
 }
     
-    
-    
-    func startRecording() {
-        
-        guard recorder.isAvailable else {
-            print("Recording is not available at this time.")
-            return
-        }
-        
-        
-        recorder.isMicrophoneEnabled = false
-        
-        
-        if #available(iOS 10.0, *) {
-            recorder.startRecording{ [unowned self] (error) in
-                
-                guard error == nil else {
-                    print("There was an error starting the recording.")
-                    print(error.debugDescription)
-                    print(".------------------")
-                    print(error?.localizedDescription)
-                    
-                    return
-                }
-                
-                print("Started Recording Successfully")
-                
-            }
-        } else {
-            // Fallback on earlier versions
-        }
-        
-    }
-    
-    
-    func stopRecording() {
-        
-        recorder.stopRecording { [unowned self] (preview, error) in
-            print("Stopped recording")
-            
-            guard preview != nil else {
-                print("Preview controller is not available.")
-                print(error.debugDescription)
-                print(".------------------")
-                print(error?.localizedDescription)
-                return
-            }
-            
-            print("Stopped Recording Successfully")
-            
-            
-            // let alert = UIAlertController(title: "Recording Finished", message: "Would you like to edit or delete your recording?", preferredStyle: .alert)
-            
-            // let deleteAction = UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction) in
-            //     self.recorder.discardRecording(handler: { () -> Void in
-            //         print("Recording suffessfully deleted.")
-            //     })
-            // })
-            
-            // let editAction = UIAlertAction(title: "Edit", style: .default, handler: { (action: UIAlertAction) -> Void in
-            //     preview?.previewControllerDelegate = self
-            //     self.present(preview!, animated: true, completion: nil)
-            // })
-            
-            // alert.addAction(editAction)
-            // alert.addAction(deleteAction)
-            // self.present(alert, animated: true, completion: nil)
-            
-            // self.isRecording = false
-            // self.viewReset()
-            
-        }
-        
-    }
 }
