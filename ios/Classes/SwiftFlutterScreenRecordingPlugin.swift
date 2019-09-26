@@ -62,7 +62,9 @@ let screenSize = UIScreen.main.bounds
         //Create the video settings
         if #available(iOS 11.0, *) {
             let videoSettings: [String : Any] = [
-                AVVideoCodecKey  : AVVideoCodecType.h264,
+                //AVVideoCodecKey  : AVVideoCodecType.h264,
+                AVVideoCodecKey: AVVideoCodecJPEG,
+                AVVideoCompressionPropertiesKey: [AVVideoQualityKey: 1],
                 AVVideoWidthKey  : screenSize.width,
                 AVVideoHeightKey : screenSize.height
             ]
