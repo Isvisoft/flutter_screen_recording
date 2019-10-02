@@ -1,6 +1,9 @@
 package com.isvisoft.flutter_screen_recording
 
 import android.Manifest
+import kotlin.concurrent.schedule
+import java.util.*
+
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -23,7 +26,10 @@ import java.io.File
 
 class FlutterScreenRecordingPlugin(
         private val registrar: Registrar
-) : MethodCallHandler, PluginRegistry.ActivityResultListener, HBRecorderListener {
+) : MethodCallHandler,
+    PluginRegistry.ActivityResultListener,
+    PluginRegistry.RequestPermissionsResultListener ,
+    HBRecorderListener {
 
 
     var hbRecorder: HBRecorder? = null
@@ -32,6 +38,8 @@ class FlutterScreenRecordingPlugin(
     private val SCREEN_RECORD_REQUEST_CODE = 333;
     private val SCREEN_STOP_RECORD_REQUEST_CODE = 334;
 
+
+
     companion object {
         @JvmStatic
         fun registerWith(registrar: Registrar) {
@@ -39,7 +47,20 @@ class FlutterScreenRecordingPlugin(
             val plugin = FlutterScreenRecordingPlugin(registrar)
             channel.setMethodCallHandler(plugin)
             registrar.addActivityResultListener(plugin);
+            registrar.addRequestPermissionsResultListener(plugin);
         }
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray): Boolean {
+        if(grantResults.indexOf(PackageManager.PERMISSION_DENIED) < 0){
+            Timer().schedule(500) {
+                startRecordScreen()
+            }
+            return true
+        }
+
+        return false
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
@@ -50,8 +71,8 @@ class FlutterScreenRecordingPlugin(
                 //Start screen recording
                 val pathRecord = "${storePath}/";
                 hbRecorder?.setOutputPath(pathRecord)
-
                 hbRecorder?.isAudioEnabled(false)
+                hbRecorder?.recordHDVideo(true);
                 hbRecorder?.startScreenRecording(data)
             }
         } else if (requestCode == SCREEN_STOP_RECORD_REQUEST_CODE) {
@@ -61,25 +82,31 @@ class FlutterScreenRecordingPlugin(
     }
 
     override fun HBRecorderOnComplete() {
-        Log.d("88888", "Finish")
+        Log.d("--RECORDING FINISH", "finish")
     }
 
 
     override fun onMethodCall(call: MethodCall, result: Result) {
 
-        print(call.method)
         if (call.method == "startRecordScreen") {
 
             hbRecorder = HBRecorder(registrar.context(), this)
 
-            if (ActivityCompat.checkSelfPermission(registrar.context(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.checkSelfPermission(registrar.context(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions((registrar.context() as FlutterApplication).currentActivity,
-                        Array<String>(1) { Manifest.permission.RECORD_AUDIO; Manifest.permission.WRITE_EXTERNAL_STORAGE; Manifest.permission.READ_EXTERNAL_STORAGE },
-                        0)
+            if (
+                ActivityCompat.checkSelfPermission(registrar.context(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(registrar.context(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+            {
 
+                ActivityCompat.requestPermissions((registrar.context() as FlutterApplication).currentActivity,
+                       arrayOf(
+                            Manifest.permission.RECORD_AUDIO,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE),1)
+
+            }else{
+                startRecordScreen()
             }
-            startRecordScreen()
+
         } else if (call.method == "stopRecordScreen") {
             stopRecordScreen()
         } else if (call.method == "getPlatformVersion") {
@@ -88,6 +115,9 @@ class FlutterScreenRecordingPlugin(
             result.notImplemented()
         }
     }
+
+
+
 
     fun startRecordScreen() {
         val mediaProjectionManager = registrar.context().applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
