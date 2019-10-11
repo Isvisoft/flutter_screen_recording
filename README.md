@@ -52,4 +52,7 @@ That's it `HBRecorder` is now ready to be used.
 
 ## iOS
 
-You only need add the permission message 
+You only need add the permission message on the Info.plist 
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Save video in gallery</string>
