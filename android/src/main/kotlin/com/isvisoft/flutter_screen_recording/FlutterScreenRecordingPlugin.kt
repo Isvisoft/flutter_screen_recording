@@ -25,15 +25,17 @@ import java.io.File
 
 
 class FlutterScreenRecordingPlugin(
-        private val registrar: Registrar
+    private val registrar: Registrar
 ) : MethodCallHandler,
     PluginRegistry.ActivityResultListener,
     PluginRegistry.RequestPermissionsResultListener ,
     HBRecorderListener {
 
 
+    private lateinit var stopResult: Result
+    private lateinit var startResult: Result
     var hbRecorder: HBRecorder? = null
-    val storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator
+    val storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
 
     private val SCREEN_RECORD_REQUEST_CODE = 333;
     private val SCREEN_STOP_RECORD_REQUEST_CODE = 334;
@@ -67,18 +69,23 @@ class FlutterScreenRecordingPlugin(
         if (requestCode == SCREEN_RECORD_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 //It is important to call this before starting the recording
-                hbRecorder?.onActivityResult(resultCode, data, (registrar.context() as FlutterApplication).currentActivity);
+
                 //Start screen recording
-                val pathRecord = "${storePath}/";
-                hbRecorder?.setOutputPath(pathRecord)
+                hbRecorder?.setOutputPath(storePath)
                 hbRecorder?.isAudioEnabled(false)
                 hbRecorder?.recordHDVideo(true);
-                hbRecorder?.startScreenRecording(data)
+                hbRecorder?.startScreenRecording(data, resultCode, registrar.activity())
+                startResult.success(null)
             }
         } else if (requestCode == SCREEN_STOP_RECORD_REQUEST_CODE) {
             hbRecorder?.stopScreenRecording()
+            stopResult.success(null)
         }
         return true;
+    }
+
+    override fun HBRecorderOnError(errorCode: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun HBRecorderOnComplete() {
@@ -90,6 +97,7 @@ class FlutterScreenRecordingPlugin(
 
         if (call.method == "startRecordScreen") {
 
+            startResult = result
             hbRecorder = HBRecorder(registrar.context(), this)
 
             if (
@@ -98,16 +106,17 @@ class FlutterScreenRecordingPlugin(
             {
 
                 ActivityCompat.requestPermissions((registrar.context() as FlutterApplication).currentActivity,
-                       arrayOf(
-                            Manifest.permission.RECORD_AUDIO,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE),1)
+                    arrayOf(
+                        Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE),1)
 
-            }else{
+            } else{
                 startRecordScreen()
             }
 
         } else if (call.method == "stopRecordScreen") {
+            stopResult = result
             stopRecordScreen()
         } else if (call.method == "getPlatformVersion") {
             result.success("Android ${android.os.Build.VERSION.RELEASE}")
@@ -127,10 +136,8 @@ class FlutterScreenRecordingPlugin(
     }
 
     fun stopRecordScreen() {
-
-        val mediaProjectionManager = registrar.context().getApplicationContext().getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
-        val permissionIntent = mediaProjectionManager?.createScreenCaptureIntent()
-        ActivityCompat.startActivityForResult((registrar.context().applicationContext as FlutterApplication).currentActivity, permissionIntent!!, SCREEN_STOP_RECORD_REQUEST_CODE, null);
+        hbRecorder?.stopScreenRecording()
+        stopResult.success(hbRecorder?.filePath)
     }
 
     private fun generateFile(extension: String = ""): File {
