@@ -4,6 +4,7 @@ version: 1.0.0
 authors:
   - Creator <imonje@isvisoft.com>
   - Creator <vvalladolid@isvisoft.com>
+  - Jonas Bark <jonas.bark@ffuf.de>
 homepage: 'https://github.com/Isvisoft/flutter_screen_recording'
 
 environment:
