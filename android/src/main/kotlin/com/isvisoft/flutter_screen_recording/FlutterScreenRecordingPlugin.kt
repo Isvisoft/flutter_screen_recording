@@ -73,7 +73,7 @@ class FlutterScreenRecordingPlugin(
                 //Start screen recording
                 hbRecorder?.setOutputPath(storePath)
                 hbRecorder?.isAudioEnabled(false)
-                hbRecorder?.recordHDVideo(true);
+                hbRecorder?.recordHDVideo(false)
                 hbRecorder?.startScreenRecording(data, resultCode, registrar.activity())
                 startResult.success(null)
             }
