@@ -48,5 +48,4 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'com.github.HBiSoft:HBRecorder:0.1.4'
 
-
 }
