@@ -34,8 +34,7 @@ import java.lang.Math
 class FlutterScreenRecordingPlugin(
         private val registrar: Registrar
 ) : MethodCallHandler,
-        PluginRegistry.ActivityResultListener,
-        PluginRegistry.RequestPermissionsResultListener{
+        PluginRegistry.ActivityResultListener{
 
     var mScreenDensity: Int = 0
     var mMediaRecorder: MediaRecorder? = null
@@ -59,22 +58,9 @@ class FlutterScreenRecordingPlugin(
             val plugin = FlutterScreenRecordingPlugin(registrar)
             channel.setMethodCallHandler(plugin)
             registrar.addActivityResultListener(plugin)
-            registrar.addRequestPermissionsResultListener(plugin)
         }
     }
 
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray): Boolean {
-        if(grantResults.indexOf(PackageManager.PERMISSION_DENIED) < 0){
-            Timer().schedule(2000) {
-                Log.d("DFA",    "dfa")
-                startRecordScreen()
-            }
-            return true
-        }
-
-        return false
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
         if (requestCode == SCREEN_RECORD_REQUEST_CODE) {
@@ -114,20 +100,6 @@ class FlutterScreenRecordingPlugin(
             mDisplayHeight = Math.round(metrics.heightPixels / metrics.scaledDensity)
 
 
-            if (
-                    ActivityCompat.checkSelfPermission(registrar.context(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.checkSelfPermission(registrar.context(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            {
-
-                ActivityCompat.requestPermissions((registrar.context() as FlutterApplication).currentActivity,
-                        arrayOf(
-                                Manifest.permission.RECORD_AUDIO,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.READ_EXTERNAL_STORAGE),1)
-
-            }else{
-                startRecordScreen()
-            }
 
         } else if (call.method == "stopRecordScreen") {
             stopRecordScreen()
