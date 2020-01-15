@@ -98,7 +98,7 @@ class FlutterScreenRecordingPlugin(
             mScreenDensity = metrics.densityDpi
             mDisplayWidth = Math.round(metrics.widthPixels / metrics.scaledDensity)
             mDisplayHeight = Math.round(metrics.heightPixels / metrics.scaledDensity)
-
+            startRecordScreen()
 
 
         } else if (call.method == "stopRecordScreen") {
