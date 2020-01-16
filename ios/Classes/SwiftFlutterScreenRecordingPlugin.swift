@@ -10,6 +10,7 @@ let recorder = RPScreenRecorder.shared()
 var videoOutputURL : URL?
 var videoWriter : AVAssetWriter?
 var videoWriterInput : AVAssetWriterInput?
+var nameVideo: String = ""
 
 let screenSize = UIScreen.main.bounds
     
@@ -21,17 +22,26 @@ let screenSize = UIScreen.main.bounds
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
 
-    print(call.method)
-    
+
     if(call.method == "getPlatformVersion"){
         result("iOS " + UIDevice.current.systemVersion)
 
     }else if(call.method == "startRecordScreen"){
-         startRecording()
+         nameVideo = call.arguments as! String
+         do{
+            startRecording()
+            result(true)
+         }catch{
+            result(false)
+         }
 
     }else if(call.method == "stopRecordScreen"){
-         stopRecording()
-
+        if(videoWriter != nil){
+            stopRecording()
+            let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
+            result(String(documentsPath.appendingPathComponent(nameVideo)))
+        }
+         result("")
     }
   }
 
@@ -39,11 +49,11 @@ let screenSize = UIScreen.main.bounds
     @objc func startRecording() {
         //Use ReplayKit to record the screen
 
-        let videoName = String(Date().timeIntervalSince1970) + ".mp4"
+        //let videoName = String(Date().timeIntervalSince1970) + ".mp4"
         
         //Create the file path to write to
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
-        self.videoOutputURL = URL(fileURLWithPath: documentsPath.appendingPathComponent(videoName))
+        self.videoOutputURL = URL(fileURLWithPath: documentsPath.appendingPathComponent(nameVideo))
 
         //Check the file does not already exist by deleting it if it does
         do {
