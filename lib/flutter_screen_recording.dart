@@ -11,12 +11,13 @@ class FlutterScreenRecording {
     return version;
   }
 
-  static Future<String> get startRecordScreen async {
-    final String path = await _channel.invokeMethod('startRecordScreen');
-    return path;
+  static Future<bool> startRecordScreen(String name) async {
+    final bool start = await _channel.invokeMethod('startRecordScreen', name);
+    return start;
   }
 
-  static Future<void> get stopRecordScreen async {
-    return await _channel.invokeMethod('stopRecordScreen');
+  static Future<String> get stopRecordScreen async {
+    final String path =  await _channel.invokeMethod('stopRecordScreen');
+    return path;
   }
 }

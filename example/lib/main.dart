@@ -97,13 +97,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   startScreenRecord() async {
-    String path = await FlutterScreenRecording.startRecordScreen;
-    print("qqqwerrtty");
-    print(path);
+    bool start = await FlutterScreenRecording.startRecordScreen("Title");
+    print(start.toString);
   }
 
   stopScreenRecord() async {
-    await FlutterScreenRecording.stopRecordScreen;
-    print("stopScreenRecord");
+    String path = await FlutterScreenRecording.stopRecordScreen;
+    print(path);
   }
 }

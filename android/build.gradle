@@ -21,7 +21,6 @@ rootProject.allprojects {
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
-
     }
 }
 
@@ -40,6 +39,14 @@ android {
     }
     lintOptions {
         disable 'InvalidPackage'
+    }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    android {
+        kotlinOptions {
+            jvmTarget = '1.8'
+        }
     }
 }
 

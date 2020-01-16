@@ -44,8 +44,9 @@ class FlutterScreenRecordingPlugin(
     var mVirtualDisplay: VirtualDisplay? = null
     var mDisplayWidth: Int = 1280
     var mDisplayHeight: Int = 800
-    val storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator + "prueba.mp4"
-
+    var storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator
+    var videoName: String = ""
+    var recorded: Boolean = false
     private val SCREEN_RECORD_REQUEST_CODE = 333
     private val SCREEN_STOP_RECORD_REQUEST_CODE = 334
 
@@ -71,32 +72,38 @@ class FlutterScreenRecordingPlugin(
                 mMediaProjection?.registerCallback(mMediaProjectionCallback, null)
                 mVirtualDisplay = createVirtualDisplay()
                 mMediaRecorder?.start()
-                Log.d("START RECORD",    "starting")
-                return true
+                recorded = true
+                return recorded
             }
         }
         return false
     }
 
-
-
     override fun onMethodCall(call: MethodCall, result: Result) {
-
         if (call.method == "startRecordScreen") {
-
-            mMediaRecorder = MediaRecorder()
-            mProjectionManager = registrar.context().applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
-            var metrics: DisplayMetrics = DisplayMetrics()
-            var windowManager = registrar.context().applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            windowManager.defaultDisplay.getMetrics(metrics)
-            mScreenDensity = metrics.densityDpi
-            mDisplayWidth = Math.round(metrics.widthPixels / metrics.scaledDensity)
-            mDisplayHeight = Math.round(metrics.heightPixels / metrics.scaledDensity)
-            startRecordScreen()
-
+            try{
+                mMediaRecorder = MediaRecorder()
+                mProjectionManager = registrar.context().applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
+                var metrics: DisplayMetrics = DisplayMetrics()
+                var windowManager = registrar.context().applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                windowManager.defaultDisplay.getMetrics(metrics)
+                mScreenDensity = metrics.densityDpi
+                mDisplayWidth = Math.round(metrics.widthPixels / metrics.scaledDensity)
+                mDisplayHeight = Math.round(metrics.heightPixels / metrics.scaledDensity)
+                videoName = call.arguments.toString()
+                startRecordScreen()
+                result.success(true)
+            }catch(e: Exception){
+                result.success(false)
+            }
 
         } else if (call.method == "stopRecordScreen") {
-            stopRecordScreen()
+            if(mMediaProjection != null){
+                stopRecordScreen()
+                result.success("${storePath}${videoName}.mp4")
+            }
+            result.success("")
+
         } else if (call.method == "getPlatformVersion") {
             result.success("Android ${android.os.Build.VERSION.RELEASE}")
         } else {
@@ -114,10 +121,13 @@ class FlutterScreenRecordingPlugin(
     }
 
     fun stopRecordScreen() {
-        mMediaRecorder?.stop()
-        mMediaRecorder?.reset()
-        stopScreenSharing()
-        Log.d("STOP RECORD",    "starting")
+
+            mProjectionManager
+            mMediaRecorder?.stop()
+            mMediaRecorder?.reset()
+            stopScreenSharing()
+            Log.d("STOP RECORD",    "starting")
+
     }
 
     private fun generateFile(extension: String = ""): File {
@@ -141,7 +151,7 @@ class FlutterScreenRecordingPlugin(
         try{
             mMediaRecorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE)
             mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            mMediaRecorder?.setOutputFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator + "video.mp4")
+            mMediaRecorder?.setOutputFile("${storePath}${videoName}.mp4")
             mMediaRecorder?.setVideoSize(mDisplayWidth, mDisplayHeight)
             mMediaRecorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
             mMediaRecorder?.setVideoEncodingBitRate(5 * mDisplayWidth * mDisplayHeight)
