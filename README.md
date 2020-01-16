@@ -19,7 +19,7 @@ String path = FlutterScreenRecording.stopRecordScreen;
 
 ## Android
 
-Flutter_Screen_Recorder do not request permissions necessary. You can use [Permission_handler](pub.dev/packages/permission_handler), a permissions plugin for Flutter.
+Flutter_Screen_Recorder do not request permissions necessary. You can use [Permission_handler](https://pub.dev/packages/permission_handler), a permissions plugin for Flutter.
 Require and add the following permissions in your manifest:
 
 ```java
