@@ -28,6 +28,7 @@ let screenSize = UIScreen.main.bounds
 
     }else if(call.method == "startRecordScreen"){
          nameVideo = call.arguments as! String
+         nameVideo = nameVideo+".mp4"
          do{
             startRecording()
             result(true)
