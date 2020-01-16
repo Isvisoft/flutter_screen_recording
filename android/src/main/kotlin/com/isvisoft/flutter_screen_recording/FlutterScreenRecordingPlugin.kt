@@ -63,25 +63,19 @@ class FlutterScreenRecordingPlugin(
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+
         if (requestCode == SCREEN_RECORD_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-
                 mMediaProjectionCallback = MediaProjectionCallback()
                 mMediaProjection = mProjectionManager?.getMediaProjection(resultCode, data)
                 mMediaProjection?.registerCallback(mMediaProjectionCallback, null)
                 mVirtualDisplay = createVirtualDisplay()
                 mMediaRecorder?.start()
                 Log.d("START RECORD",    "starting")
-
+                return true
             }
-        } else if (requestCode == SCREEN_STOP_RECORD_REQUEST_CODE) {
-            mMediaRecorder?.stop()
-            mMediaRecorder?.reset()
-            stopScreenSharing()
-            Log.d("STOP RECORD",    "starting")
-
         }
-        return true
+        return false
     }
 
 
@@ -120,8 +114,10 @@ class FlutterScreenRecordingPlugin(
     }
 
     fun stopRecordScreen() {
-        val permissionIntent = mProjectionManager?.createScreenCaptureIntent()
-        ActivityCompat.startActivityForResult((registrar.context().applicationContext as FlutterApplication).currentActivity, permissionIntent!!, SCREEN_STOP_RECORD_REQUEST_CODE, null)
+        mMediaRecorder?.stop()
+        mMediaRecorder?.reset()
+        stopScreenSharing()
+        Log.d("STOP RECORD",    "starting")
     }
 
     private fun generateFile(extension: String = ""): File {
