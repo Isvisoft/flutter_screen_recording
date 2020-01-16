@@ -1,3 +1,4 @@
-## 1.0.1
+## 1.0.2
 
-* Update info pubsec.yaml
+* ImagePicker conflict fixed
+* Remove HBRecorder.
