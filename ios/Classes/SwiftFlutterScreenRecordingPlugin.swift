@@ -11,7 +11,7 @@ var videoOutputURL : URL?
 var videoWriter : AVAssetWriter?
 var videoWriterInput : AVAssetWriterInput?
 var nameVideo: String = ""
-
+var _result: FlutterResult?
 let screenSize = UIScreen.main.bounds
     
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -27,11 +27,11 @@ let screenSize = UIScreen.main.bounds
         result("iOS " + UIDevice.current.systemVersion)
 
     }else if(call.method == "startRecordScreen"){
+        _result = result
          nameVideo = call.arguments as! String
          nameVideo = nameVideo+".mp4"
          do{
             startRecording()
-            result(true)
          }catch{
             result(false)
          }
@@ -97,6 +97,7 @@ let screenSize = UIScreen.main.bounds
                 guard error == nil else {
                     //Handle error
                     print("Error starting capture");
+                    _result(false)
                     return;
                 }
                 
@@ -110,6 +111,7 @@ let screenSize = UIScreen.main.bounds
                         
                         if (( self.videoWriter?.startWriting ) != nil) {
                             print("Starting writing");
+                            _result(true)
                             self.videoWriter?.startWriting()
                             self.videoWriter?.startSession(atSourceTime:  CMSampleBufferGetPresentationTimeStamp(cmSampleBuffer))
                         }
@@ -120,15 +122,19 @@ let screenSize = UIScreen.main.bounds
                             print("Writting a sample");
                             if  self.videoWriterInput?.append(cmSampleBuffer) == false {
                                 print(" we have a problem writing video")
+                                _result(false)
                             }
                         }
                     }
                     
                 default:
                     print("not a video sample, so ignore");
+                    _result(false)
                 }
             } )
         } else {
+            _result(false)
+
             //Fallback on earlier versions
         }
     }

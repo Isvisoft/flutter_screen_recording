@@ -46,7 +46,6 @@ class FlutterScreenRecordingPlugin(
     var mDisplayHeight: Int = 800
     var storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator
     var videoName: String = ""
-    var recorded: Boolean = false
     private val SCREEN_RECORD_REQUEST_CODE = 333
     private val SCREEN_STOP_RECORD_REQUEST_CODE = 334
 
@@ -73,10 +72,9 @@ class FlutterScreenRecordingPlugin(
                 mMediaProjection = mProjectionManager?.getMediaProjection(resultCode, data)
                 mMediaProjection?.registerCallback(mMediaProjectionCallback, null)
                 mVirtualDisplay = createVirtualDisplay()
-                mMediaRecorder?.start()
-                recorded = true
                 _result.success(true)
-                return recorded
+                mMediaRecorder?.start()
+                return true
             }
         }
         _result.success(false)
