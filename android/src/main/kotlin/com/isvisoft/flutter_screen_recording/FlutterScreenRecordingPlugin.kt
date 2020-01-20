@@ -50,6 +50,8 @@ class FlutterScreenRecordingPlugin(
     private val SCREEN_RECORD_REQUEST_CODE = 333
     private val SCREEN_STOP_RECORD_REQUEST_CODE = 334
 
+    private lateinit var _result: MethodChannel.Result
+
 
 
     companion object {
@@ -73,15 +75,18 @@ class FlutterScreenRecordingPlugin(
                 mVirtualDisplay = createVirtualDisplay()
                 mMediaRecorder?.start()
                 recorded = true
+                _result.success(true)
                 return recorded
             }
         }
+        _result.success(false)
         return false
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         if (call.method == "startRecordScreen") {
             try{
+                _result = result
                 mMediaRecorder = MediaRecorder()
                 mProjectionManager = registrar.context().applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
                 var metrics: DisplayMetrics = DisplayMetrics()
@@ -92,13 +97,13 @@ class FlutterScreenRecordingPlugin(
                 mDisplayHeight = Math.round(metrics.heightPixels / metrics.scaledDensity)
                 videoName = call.arguments.toString()
                 startRecordScreen()
-                result.success(true)
+                //result.success(true)
             }catch(e: Exception){
                 result.success(false)
             }
 
         } else if (call.method == "stopRecordScreen") {
-            if(mMediaProjection != null){
+            if(mMediaRecorder != null){
                 stopRecordScreen()
                 result.success("${storePath}${videoName}.mp4")
             }
