@@ -11,7 +11,7 @@ var videoOutputURL : URL?
 var videoWriter : AVAssetWriter?
 var videoWriterInput : AVAssetWriterInput?
 var nameVideo: String = ""
-var _result: FlutterResult?
+var myResult: FlutterResult?
 let screenSize = UIScreen.main.bounds
     
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -27,14 +27,11 @@ let screenSize = UIScreen.main.bounds
         result("iOS " + UIDevice.current.systemVersion)
 
     }else if(call.method == "startRecordScreen"){
-        _result = result
+         myResult = result
          nameVideo = call.arguments as! String
          nameVideo = nameVideo+".mp4"
-         do{
-            startRecording()
-         }catch{
-            result(false)
-         }
+         startRecording()
+
 
     }else if(call.method == "stopRecordScreen"){
         if(videoWriter != nil){
@@ -67,6 +64,7 @@ let screenSize = UIScreen.main.bounds
         } catch let writerError as NSError {
             print("Error opening video file", writerError);
             videoWriter = nil;
+            myResult!(false)
             return;
         }
 
@@ -97,7 +95,8 @@ let screenSize = UIScreen.main.bounds
                 guard error == nil else {
                     //Handle error
                     print("Error starting capture");
-                    _result(false)
+                    //result(false)
+                    self.myResult!(false)
                     return;
                 }
                 
@@ -111,7 +110,7 @@ let screenSize = UIScreen.main.bounds
                         
                         if (( self.videoWriter?.startWriting ) != nil) {
                             print("Starting writing");
-                            _result(true)
+                            self.myResult!(true)
                             self.videoWriter?.startWriting()
                             self.videoWriter?.startSession(atSourceTime:  CMSampleBufferGetPresentationTimeStamp(cmSampleBuffer))
                         }
@@ -122,19 +121,18 @@ let screenSize = UIScreen.main.bounds
                             print("Writting a sample");
                             if  self.videoWriterInput?.append(cmSampleBuffer) == false {
                                 print(" we have a problem writing video")
-                                _result(false)
+                                self.myResult!(false)
                             }
                         }
                     }
                     
                 default:
                     print("not a video sample, so ignore");
-                    _result(false)
+                    self.myResult!(true)
                 }
             } )
         } else {
-            _result(false)
-
+            self.myResult!(true)
             //Fallback on earlier versions
         }
     }
