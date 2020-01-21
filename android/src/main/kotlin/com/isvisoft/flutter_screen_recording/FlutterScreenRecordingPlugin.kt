@@ -39,7 +39,7 @@ class FlutterScreenRecordingPlugin(
 
     private val SCREEN_RECORD_REQUEST_CODE = 333;
     private val SCREEN_STOP_RECORD_REQUEST_CODE = 334;
-
+    private val SCREEN_RECORD_PERMISSION_CODE = 335;
 
 
     companion object {
@@ -55,7 +55,7 @@ class FlutterScreenRecordingPlugin(
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray): Boolean {
-        if(grantResults.indexOf(PackageManager.PERMISSION_DENIED) < 0){
+        if(requestCode == SCREEN_RECORD_PERMISSION_CODE && grantResults.indexOf(PackageManager.PERMISSION_DENIED) < 0){
             Timer().schedule(500) {
                 startRecordScreen()
             }
@@ -109,7 +109,7 @@ class FlutterScreenRecordingPlugin(
                     arrayOf(
                         Manifest.permission.RECORD_AUDIO,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE),1)
+                        Manifest.permission.READ_EXTERNAL_STORAGE), SCREEN_RECORD_PERMISSION_CODE)
 
             } else{
                 startRecordScreen()
