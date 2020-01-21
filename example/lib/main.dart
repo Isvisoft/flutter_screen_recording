@@ -81,13 +81,16 @@ class _MyAppState extends State<MyApp> {
         floatingActionButton: FloatingActionButton(
           child: Text('$textBtn'),
           onPressed: () {
-            recording = !recording;
-            textBtn = (recording) ? "Stop" : "Play";
+
 
             if (!recording) {
               stopScreenRecord();
             } else {
-              startScreenRecord();
+              var start = startScreenRecord();
+              if(start){
+                recording = !recording;
+                textBtn = (recording) ? "Stop" : "Play";
+              }
             }
             setState(() {});
           },
@@ -97,8 +100,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   startScreenRecord() async {
+    print("---ª");
     bool start = await FlutterScreenRecording.startRecordScreen("Title");
-    print(start.toString());
+    print(start);
+    return start;
   }
 
   stopScreenRecord() async {

@@ -48,7 +48,7 @@ let screenSize = UIScreen.main.bounds
         //Use ReplayKit to record the screen
 
         //let videoName = String(Date().timeIntervalSince1970) + ".mp4"
-        
+
         //Create the file path to write to
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
         self.videoOutputURL = URL(fileURLWithPath: documentsPath.appendingPathComponent(nameVideo))
@@ -77,7 +77,7 @@ let screenSize = UIScreen.main.bounds
                 AVVideoWidthKey  : screenSize.width,
                 AVVideoHeightKey : screenSize.height
             ]
-        
+
 
         //Create the asset writer input object whihc is actually used to write out the video
         //with the video settings we have created
@@ -85,21 +85,20 @@ let screenSize = UIScreen.main.bounds
             videoWriter?.add(videoWriterInput!);
 
         }
-        
-        
+
+
         //Tell the screen recorder to start capturing and to call the handler when it has a
-        //sample 
+        //sample
         if #available(iOS 11.0, *) {
             RPScreenRecorder.shared().startCapture(handler: { (cmSampleBuffer, rpSampleType, error) in
-                
+
                 guard error == nil else {
                     //Handle error
                     print("Error starting capture");
-                    //result(false)
                     self.myResult!(false)
                     return;
                 }
-                
+
                 print("rpSampleType")
                 print(rpSampleType)
 
@@ -107,7 +106,7 @@ let screenSize = UIScreen.main.bounds
                 case RPSampleBufferType.video:
                     print("writing sample....");
                     if self.videoWriter?.status == AVAssetWriter.Status.unknown {
-                        
+
                         if (( self.videoWriter?.startWriting ) != nil) {
                             print("Starting writing");
                             self.myResult!(true)
@@ -115,7 +114,7 @@ let screenSize = UIScreen.main.bounds
                             self.videoWriter?.startSession(atSourceTime:  CMSampleBufferGetPresentationTimeStamp(cmSampleBuffer))
                         }
                     }
-                    
+
                     if self.videoWriter?.status == AVAssetWriter.Status.writing {
                         if (self.videoWriterInput?.isReadyForMoreMediaData == true) {
                             print("Writting a sample");
@@ -125,14 +124,17 @@ let screenSize = UIScreen.main.bounds
                             }
                         }
                     }
-                    
+
                 default:
                     print("not a video sample, so ignore");
-                    self.myResult!(true)
+                    self.myResult!(false)
+
                 }
             } )
         } else {
-            self.myResult!(true)
+            //result(false)
+            self.myResult!(false)
+
             //Fallback on earlier versions
         }
     }
