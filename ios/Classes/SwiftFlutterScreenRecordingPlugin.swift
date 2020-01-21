@@ -45,6 +45,7 @@ let screenSize = UIScreen.main.bounds
 
 
     @objc func startRecording() {
+
         //Use ReplayKit to record the screen
 
         //let videoName = String(Date().timeIntervalSince1970) + ".mp4"
@@ -64,7 +65,7 @@ let screenSize = UIScreen.main.bounds
         } catch let writerError as NSError {
             print("Error opening video file", writerError);
             videoWriter = nil;
-            myResult!(false)
+            //myResult!(false)
             return;
         }
 
@@ -90,8 +91,8 @@ let screenSize = UIScreen.main.bounds
         //Tell the screen recorder to start capturing and to call the handler when it has a
         //sample
         if #available(iOS 11.0, *) {
-            RPScreenRecorder.shared().startCapture(handler: { (cmSampleBuffer, rpSampleType, error) in
-
+            RPScreenRecorder.shared().startCapture(
+            handler: { (cmSampleBuffer, rpSampleType, error) in
                 guard error == nil else {
                     //Handle error
                     print("Error starting capture");
@@ -125,16 +126,19 @@ let screenSize = UIScreen.main.bounds
                         }
                     }
 
+
                 default:
-                    print("not a video sample, so ignore");
-                    self.myResult!(false)
-
+                   print("not a video sample, so ignore");
                 }
-            } )
+            } ){(error) in
+                        guard error == nil else {
+                           //Handle error
+                           print("Screen record not allowed");
+                           self.myResult!(false)
+                           return;
+                       }
+                   }
         } else {
-            //result(false)
-            self.myResult!(false)
-
             //Fallback on earlier versions
         }
     }
