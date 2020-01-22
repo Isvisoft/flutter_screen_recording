@@ -105,8 +105,9 @@ class FlutterScreenRecordingPlugin(
             if(mMediaRecorder != null){
                 stopRecordScreen()
                 result.success("${storePath}${videoName}.mp4")
+            }else{
+                result.success("")
             }
-            result.success("")
 
         } else if (call.method == "getPlatformVersion") {
             result.success("Android ${android.os.Build.VERSION.RELEASE}")
