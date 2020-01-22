@@ -76,8 +76,9 @@ class FlutterScreenRecordingPlugin(
                 mMediaRecorder?.start()
                 return true
             }
+            _result.success(false)
         }
-        _result.success(false)
+        
         return false
     }
 
