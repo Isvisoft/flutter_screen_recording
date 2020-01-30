@@ -102,10 +102,14 @@ class FlutterScreenRecordingPlugin(
             }
 
         } else if (call.method == "stopRecordScreen") {
-            if(mMediaRecorder != null){
-                stopRecordScreen()
-                result.success("${storePath}${videoName}.mp4")
-            }else{
+            try{
+                if(mMediaRecorder != null){
+                    stopRecordScreen()
+                    result.success("${storePath}${videoName}.mp4")
+                }else{
+                    result.success("")
+                }
+            }catch(e: Exception){
                 result.success("")
             }
 
@@ -126,8 +130,6 @@ class FlutterScreenRecordingPlugin(
     }
 
     fun stopRecordScreen() {
-
-            mProjectionManager
             mMediaRecorder?.stop()
             mMediaRecorder?.reset()
             stopScreenSharing()
