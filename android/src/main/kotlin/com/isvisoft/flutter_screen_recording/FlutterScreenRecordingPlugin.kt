@@ -46,9 +46,10 @@ class FlutterScreenRecordingPlugin(
     var mDisplayHeight: Int = 800
     var storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator
     var videoName: String = ""
-    var recorded: Boolean = false
     private val SCREEN_RECORD_REQUEST_CODE = 333
     private val SCREEN_STOP_RECORD_REQUEST_CODE = 334
+
+    private lateinit var _result: MethodChannel.Result
 
 
 
@@ -71,17 +72,21 @@ class FlutterScreenRecordingPlugin(
                 mMediaProjection = mProjectionManager?.getMediaProjection(resultCode, data)
                 mMediaProjection?.registerCallback(mMediaProjectionCallback, null)
                 mVirtualDisplay = createVirtualDisplay()
+                _result.success(true)
                 mMediaRecorder?.start()
-                recorded = true
-                return recorded
+                return true
+            }else{
+            _result.success(false)
             }
         }
+        
         return false
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         if (call.method == "startRecordScreen") {
             try{
+                _result = result
                 mMediaRecorder = MediaRecorder()
                 mProjectionManager = registrar.context().applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
                 var metrics: DisplayMetrics = DisplayMetrics()
@@ -92,17 +97,22 @@ class FlutterScreenRecordingPlugin(
                 mDisplayHeight = Math.round(metrics.heightPixels / metrics.scaledDensity)
                 videoName = call.arguments.toString()
                 startRecordScreen()
-                result.success(true)
+                //result.success(true)
             }catch(e: Exception){
                 result.success(false)
             }
 
         } else if (call.method == "stopRecordScreen") {
-            if(mMediaProjection != null){
-                stopRecordScreen()
-                result.success("${storePath}${videoName}.mp4")
+            try{
+                if(mMediaRecorder != null){
+                    stopRecordScreen()
+                    result.success("${storePath}${videoName}.mp4")
+                }else{
+                    result.success("")
+                }
+            }catch(e: Exception){
+                result.success("")
             }
-            result.success("")
 
         } else if (call.method == "getPlatformVersion") {
             result.success("Android ${android.os.Build.VERSION.RELEASE}")
@@ -121,8 +131,6 @@ class FlutterScreenRecordingPlugin(
     }
 
     fun stopRecordScreen() {
-
-            mProjectionManager
             mMediaRecorder?.stop()
             mMediaRecorder?.reset()
             stopScreenSharing()

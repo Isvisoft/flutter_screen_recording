@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
 import 'package:quiver/async.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,15 +13,25 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
+
+
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   String textBtn = "Play";
   bool recording = false;
   int _time = 0;
 
+  requestPermissions() async {
+    await PermissionHandler().requestPermissions([
+      PermissionGroup.storage,
+      PermissionGroup.photos,
+    ]);
+  }
+
   @override
   void initState() {
     super.initState();
+    requestPermissions();
     initPlatformState();
   }
 
@@ -80,16 +91,12 @@ class _MyAppState extends State<MyApp> {
         ),
         floatingActionButton: FloatingActionButton(
           child: Text('$textBtn'),
-          onPressed: () {
-            recording = !recording;
-            textBtn = (recording) ? "Stop" : "Play";
-
-            if (!recording) {
+          onPressed: () async {
+            if (recording) {
               stopScreenRecord();
             } else {
               startScreenRecord();
             }
-            setState(() {});
           },
         ),
       ),
@@ -98,11 +105,21 @@ class _MyAppState extends State<MyApp> {
 
   startScreenRecord() async {
     bool start = await FlutterScreenRecording.startRecordScreen("Title");
-    print(start.toString);
+    if(start){
+      setState(() {
+        recording = !recording;
+        textBtn = (recording) ? "Stop" : "Play";
+      });
+    }
+    return start;
   }
 
   stopScreenRecord() async {
     String path = await FlutterScreenRecording.stopRecordScreen;
+    setState(() {
+      recording = !recording;
+      textBtn = (recording) ? "Stop" : "Play";
+    });
     print(path);
   }
 }
