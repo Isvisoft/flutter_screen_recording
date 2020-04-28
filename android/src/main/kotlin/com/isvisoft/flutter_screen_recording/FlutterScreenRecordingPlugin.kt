@@ -161,7 +161,7 @@ class FlutterScreenRecordingPlugin(
             mMediaRecorder?.setVideoSize(mDisplayWidth, mDisplayHeight)
             mMediaRecorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
             mMediaRecorder?.setVideoEncodingBitRate(5 * mDisplayWidth * mDisplayHeight)
-            mMediaRecorder?.setVideoFrameRate(60) // 30
+            mMediaRecorder?.setVideoFrameRate(30)
             mMediaRecorder?.prepare()
         }catch(e : IOException){
             Log.d("--INIT-RECORDER", e.message)
