@@ -93,8 +93,8 @@ class FlutterScreenRecordingPlugin(
                 var windowManager = registrar.context().applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
                 windowManager.defaultDisplay.getMetrics(metrics)
                 mScreenDensity = metrics.densityDpi
-                mDisplayWidth = Math.round(metrics.widthPixels / metrics.scaledDensity)
-                mDisplayHeight = Math.round(metrics.heightPixels / metrics.scaledDensity)
+                mDisplayWidth = metrics.widthPixels
+                mDisplayHeight = metrics.heightPixels
                 videoName = call.arguments.toString()
                 startRecordScreen()
                 //result.success(true)
@@ -122,12 +122,10 @@ class FlutterScreenRecordingPlugin(
     }
 
 
-
-
     fun startRecordScreen() {
         initRecorder()
         val permissionIntent = mProjectionManager?.createScreenCaptureIntent()
-        ActivityCompat.startActivityForResult((registrar.context().applicationContext as FlutterApplication).currentActivity, permissionIntent!!, SCREEN_RECORD_REQUEST_CODE, null)
+        ActivityCompat.startActivityForResult(registrar.activity(), permissionIntent!!, SCREEN_RECORD_REQUEST_CODE, null)
     }
 
     fun stopRecordScreen() {
