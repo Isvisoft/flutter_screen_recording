@@ -81,12 +81,12 @@ class FlutterScreenRecordingPlugin(
                 _result = result
                 mMediaRecorder = MediaRecorder()
                 mProjectionManager = registrar.context().applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
-                var metrics: DisplayMetrics = DisplayMetrics()
-                var windowManager = registrar.context().applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                val windowManager = registrar.context().applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                val metrics: DisplayMetrics = DisplayMetrics()
                 windowManager.defaultDisplay.getMetrics(metrics)
                 mScreenDensity = metrics.densityDpi
-                mDisplayWidth = Math.round(metrics.widthPixels / metrics.scaledDensity)
-                mDisplayHeight = Math.round(metrics.heightPixels / metrics.scaledDensity)
+
+                calculeResolution(metrics)
                 videoName = call.arguments.toString()
                 startRecordScreen()
                 //result.success(true)
@@ -111,6 +111,23 @@ class FlutterScreenRecordingPlugin(
         } else {
             result.notImplemented()
         }
+    }
+
+    fun calculeResolution(metrics: DisplayMetrics) {
+
+        val maxRes = 1280.0;
+        if (metrics.widthPixels > metrics.heightPixels) {
+            val rate = metrics.widthPixels / maxRes
+            mDisplayWidth = maxRes.toInt()
+            mDisplayHeight = (metrics.heightPixels / rate).toInt()
+        } else {
+            val rate = metrics.heightPixels / maxRes
+            mDisplayHeight = maxRes.toInt()
+            mDisplayWidth = (metrics.widthPixels / rate).toInt()
+        }
+
+        println("--------------------------> calculeResolution ")
+        println(mDisplayWidth.toString() + " x " + mDisplayHeight)
     }
 
 
@@ -138,6 +155,8 @@ class FlutterScreenRecordingPlugin(
 
             mMediaRecorder?.stop()
             mMediaRecorder?.reset()
+            println("stopRecordScreen success")
+
         } catch (e: Exception) {
             Log.d("--INIT-RECORDER", e.message)
             println("stopRecordScreen error")
