@@ -1,3 +1,7 @@
+## 1.0.5
+
+* Android devices compatibility
+
 ## 1.0.4
 
 * Included permission controller
