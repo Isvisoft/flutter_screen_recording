@@ -1,1 +1,1 @@
-{"_info":"// This is a generated file; do not edit or check into version control.","dependencyGraph":[{"name":"flutter_screen_recording","dependencies":[]},{"name":"permission_handler","dependencies":[]}]}
+{"_info":"// This is a generated file; do not edit or check into version control.","dependencyGraph":[{"name":"flutter_screen_recording","dependencies":[]},{"name":"open_file","dependencies":[]},{"name":"permission_handler","dependencies":[]}]}

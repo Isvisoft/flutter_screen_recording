@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
 import 'package:quiver/async.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:open_file/open_file.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,8 +13,6 @@ class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
-
-
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
@@ -105,7 +104,7 @@ class _MyAppState extends State<MyApp> {
 
   startScreenRecord() async {
     bool start = await FlutterScreenRecording.startRecordScreen("Title");
-    if(start){
+    if (start) {
       setState(() {
         recording = !recording;
         textBtn = (recording) ? "Stop" : "Play";
@@ -120,6 +119,8 @@ class _MyAppState extends State<MyApp> {
       recording = !recording;
       textBtn = (recording) ? "Stop" : "Play";
     });
+    print("Opening video");
     print(path);
+    OpenFile.open(path);
   }
 }

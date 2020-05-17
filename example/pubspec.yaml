@@ -17,7 +17,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   permission_handler: ^4.1.0
-
+  open_file: ^3.0.1
 
   flutter_screen_recording:
     path: ../

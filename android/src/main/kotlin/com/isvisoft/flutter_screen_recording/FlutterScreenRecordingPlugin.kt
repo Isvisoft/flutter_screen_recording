@@ -126,7 +126,9 @@ class FlutterScreenRecordingPlugin(
             mDisplayWidth = (metrics.widthPixels / rate).toInt()
         }
 
-        println("--------------------------> calculeResolution ")
+        println("Original Resolution ")
+        println(metrics.widthPixels.toString() + " x " + metrics.heightPixels)
+        println("Calcule Resolution ")
         println(mDisplayWidth.toString() + " x " + mDisplayHeight)
     }
 
