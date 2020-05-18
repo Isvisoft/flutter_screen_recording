@@ -115,7 +115,12 @@ class FlutterScreenRecordingPlugin(
 
     fun calculeResolution(metrics: DisplayMetrics) {
 
-        val maxRes = 1280.0;
+        var maxRes = 1280.0;
+
+        if (metrics.scaledDensity >= 3.0f) {
+            maxRes = 1920.0;
+        }
+
         if (metrics.widthPixels > metrics.heightPixels) {
             val rate = metrics.widthPixels / maxRes
             mDisplayWidth = maxRes.toInt()
@@ -126,12 +131,13 @@ class FlutterScreenRecordingPlugin(
             mDisplayWidth = (metrics.widthPixels / rate).toInt()
         }
 
+        println("Scaled Density")
+        println(metrics.scaledDensity)
         println("Original Resolution ")
         println(metrics.widthPixels.toString() + " x " + metrics.heightPixels)
         println("Calcule Resolution ")
         println(mDisplayWidth.toString() + " x " + mDisplayHeight)
     }
-
 
     fun startRecordScreen() {
         try {
