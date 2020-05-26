@@ -91,6 +91,8 @@ class FlutterScreenRecordingPlugin(
                 startRecordScreen()
                 //result.success(true)
             } catch (e: Exception) {
+                println("Error startRecordScreen")
+                println(e.message)
                 result.success(false)
             }
 
@@ -152,6 +154,8 @@ class FlutterScreenRecordingPlugin(
             mMediaRecorder?.start()
         } catch (e: IOException) {
             Log.d("--INIT-RECORDER", e.message)
+            println("Error INIT-RECORDER")
+            println(e.message)
         }
 
         val permissionIntent = mProjectionManager?.createScreenCaptureIntent()
