@@ -91,7 +91,7 @@ class FlutterScreenRecordingPlugin(
                 startRecordScreen()
                 //result.success(true)
             } catch (e: Exception) {
-                println("Error startRecordScreen")
+                println("Error onMethodCall startRecordScreen")
                 println(e.message)
                 result.success(false)
             }
@@ -138,7 +138,7 @@ class FlutterScreenRecordingPlugin(
         println("Original Resolution ")
         println(metrics.widthPixels.toString() + " x " + metrics.heightPixels)
         println("Calcule Resolution ")
-        println(mDisplayWidth.toString() + " x " + mDisplayHeight)
+        println("$mDisplayWidth x $mDisplayHeight")
     }
 
     fun startRecordScreen() {
@@ -154,12 +154,14 @@ class FlutterScreenRecordingPlugin(
             mMediaRecorder?.start()
         } catch (e: IOException) {
             Log.d("--INIT-RECORDER", e.message)
-            println("Error INIT-RECORDER")
+            println("Error startRecordScreen")
             println(e.message)
         }
 
         val permissionIntent = mProjectionManager?.createScreenCaptureIntent()
-        ActivityCompat.startActivityForResult((registrar.context().applicationContext as FlutterApplication).currentActivity, permissionIntent!!, SCREEN_RECORD_REQUEST_CODE, null)
+//        ActivityCompat.startActivityForResult((registrar.context().applicationContext as FlutterApplication).currentActivity, permissionIntent!!, SCREEN_RECORD_REQUEST_CODE, null)
+        ActivityCompat.startActivityForResult(registrar.activity(), permissionIntent!!, SCREEN_RECORD_REQUEST_CODE, null)
+
     }
 
     fun stopRecordScreen() {
