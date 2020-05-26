@@ -1,3 +1,7 @@
+## 1.0.6
+
+* Some Android bug fixed
+
 ## 1.0.5
 
 * Android devices compatibility
