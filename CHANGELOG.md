@@ -1,3 +1,7 @@
+## 1.0.7
+
+* Add fun startRecordScreenAndAudio in Android
+
 ## 1.0.6
 
 * Some Android bug fixed
