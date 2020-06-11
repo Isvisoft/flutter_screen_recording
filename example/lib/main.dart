@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
 import 'package:quiver/async.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,8 +14,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-  String textBtn = "Play";
   bool recording = false;
   int _time = 0;
 
@@ -24,6 +21,7 @@ class _MyAppState extends State<MyApp> {
     await PermissionHandler().requestPermissions([
       PermissionGroup.storage,
       PermissionGroup.photos,
+      PermissionGroup.microphone,
     ]);
   }
 
@@ -31,29 +29,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     requestPermissions();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-
-    try {
-      platformVersion = await FlutterScreenRecording.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
     startTimer();
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
   void startTimer() {
@@ -64,9 +40,7 @@ class _MyAppState extends State<MyApp> {
 
     var sub = countDownTimer.listen(null);
     sub.onData((duration) {
-      setState(() {
-        _time++;
-      });
+      setState(() => _time++);
     });
 
     sub.onDone(() {
@@ -80,36 +54,52 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Flutter Screen Recording'),
         ),
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Running on: $_platformVersion\n'),
             Text('Time: $_time\n'),
+            !recording
+                ? Center(
+                    child: RaisedButton(
+                      child: Text("Record Screen"),
+                      onPressed: () => startScreenRecord(false),
+                    ),
+                  )
+                : Container(),
+            !recording
+                ? Center(
+                    child: RaisedButton(
+                      child: Text("Record Screen & audio"),
+                      onPressed: () => startScreenRecord(true),
+                    ),
+                  )
+                : Center(
+                    child: RaisedButton(
+                      child: Text("Stop Record"),
+                      onPressed: () => stopScreenRecord(),
+                    ),
+                  )
           ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: Text('$textBtn'),
-          onPressed: () async {
-            if (recording) {
-              stopScreenRecord();
-            } else {
-              startScreenRecord();
-            }
-          },
         ),
       ),
     );
   }
 
-  startScreenRecord() async {
-    bool start = await FlutterScreenRecording.startRecordScreen("Title");
-    if (start) {
-      setState(() {
-        recording = !recording;
-        textBtn = (recording) ? "Stop" : "Play";
-      });
+  startScreenRecord(bool audio) async {
+    bool start = false;
+
+    if (audio) {
+      start = await FlutterScreenRecording.startRecordScreenAndAudio("Title");
+    } else {
+      start = await FlutterScreenRecording.startRecordScreen("Title");
     }
+
+    if (start) {
+      setState(() => recording = !recording);
+    }
+
     return start;
   }
 
@@ -117,7 +107,6 @@ class _MyAppState extends State<MyApp> {
     String path = await FlutterScreenRecording.stopRecordScreen;
     setState(() {
       recording = !recording;
-      textBtn = (recording) ? "Stop" : "Play";
     });
     print("Opening video");
     print(path);

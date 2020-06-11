@@ -38,7 +38,8 @@ class FlutterScreenRecordingPlugin(
     var mDisplayWidth: Int = 1280
     var mDisplayHeight: Int = 800
     var storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator
-    var videoName: String = ""
+    var videoName: String? = ""
+    var recordAudio: Boolean? = false;
     private val SCREEN_RECORD_REQUEST_CODE = 333
     private val SCREEN_STOP_RECORD_REQUEST_CODE = 334
 
@@ -65,7 +66,6 @@ class FlutterScreenRecordingPlugin(
                 mMediaProjection?.registerCallback(mMediaProjectionCallback, null)
                 mVirtualDisplay = createVirtualDisplay()
                 _result.success(true)
-//                mMediaRecorder?.start()
                 return true
             } else {
                 _result.success(false)
@@ -87,7 +87,10 @@ class FlutterScreenRecordingPlugin(
                 mScreenDensity = metrics.densityDpi
 
                 calculeResolution(metrics)
-                videoName = call.arguments.toString()
+
+                videoName = call.argument<String?>("name")
+                recordAudio = call.argument<Boolean?>("audio")
+
                 startRecordScreen()
                 //result.success(true)
             } catch (e: Exception) {
@@ -108,8 +111,6 @@ class FlutterScreenRecordingPlugin(
                 result.success("")
             }
 
-        } else if (call.method == "getPlatformVersion") {
-            result.success("Android ${android.os.Build.VERSION.RELEASE}")
         } else {
             result.notImplemented()
         }
@@ -144,12 +145,20 @@ class FlutterScreenRecordingPlugin(
     fun startRecordScreen() {
         try {
             mMediaRecorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE)
-            mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            if (recordAudio!!) {
+                mMediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC);
+                mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                mMediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            } else {
+                mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            }
             mMediaRecorder?.setOutputFile("${storePath}${videoName}.mp4")
             mMediaRecorder?.setVideoSize(mDisplayWidth, mDisplayHeight)
             mMediaRecorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
             mMediaRecorder?.setVideoEncodingBitRate(5 * mDisplayWidth * mDisplayHeight)
-            mMediaRecorder?.setVideoFrameRate(60) // 30
+            mMediaRecorder?.setVideoFrameRate(60)
+
+
             mMediaRecorder?.prepare()
             mMediaRecorder?.start()
         } catch (e: IOException) {
