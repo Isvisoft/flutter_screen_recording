@@ -1,3 +1,7 @@
+## 1.0.8
+
+* Update Doc
+
 ## 1.0.7
 
 * Add fun startRecordScreenAndAudio in Android
