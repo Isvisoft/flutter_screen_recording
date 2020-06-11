@@ -11,7 +11,7 @@ This plugin can be used for record the screen on Android and iOS devices.
 ```dart
 bool started = FlutterScreenRecording.startRecordScreen(videoName);
 ```
-    Or
+Or
 
 ```dart
 bool started = FlutterScreenRecording.startRecordScreenAndAudio(videoName);
