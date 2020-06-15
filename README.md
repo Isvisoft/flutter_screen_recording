@@ -40,3 +40,5 @@ You only need add the permission message on the Info.plist
 
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Save video in gallery</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Save audio in video</string>

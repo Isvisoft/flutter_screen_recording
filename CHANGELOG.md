@@ -1,3 +1,7 @@
+## 1.0.9
+
+* iOS bug fixed
+
 ## 1.0.8
 
 * Update Doc
