@@ -1,5 +1,5 @@
 name: flutter_screen_recording_platform_interface
-description: A new Flutter plugin for record the screen. This plugin can be used for record the screen on android and iOS devices. This is the platform interface library
+description: A new Flutter plugin for record the screen. This plugin can be used for record the screen on android, iOS, and web devices. This is the platform interface library
 version: 1.0.10
 homepage: "https://github.com/Isvisoft/flutter_screen_recording"
 

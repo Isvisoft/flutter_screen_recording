@@ -55,17 +55,17 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_screen_recording:
+    dependency: "direct dev"
+    description:
+      name: flutter_screen_recording
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.10"
   flutter_screen_recording_platform_interface:
     dependency: "direct main"
     description:
       path: "../flutter_screen_recording_platform_interface"
-      relative: true
-    source: path
-    version: "1.0.10"
-  flutter_screen_recording_web:
-    dependency: "direct main"
-    description:
-      path: "../flutter_screen_recording_web"
       relative: true
     source: path
     version: "1.0.10"
@@ -75,12 +75,12 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_web_plugins:
-    dependency: transitive
+    dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
   js:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: js
       url: "https://pub.dartlang.org"
@@ -108,14 +108,14 @@ packages:
     source: hosted
     version: "1.7.0"
   platform_detect:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: platform_detect
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.4.0"
   plugin_platform_interface:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
