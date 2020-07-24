@@ -43,13 +43,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.14.13"
-  cupertino_icons:
-    dependency: "direct main"
-    description:
-      name: cupertino_icons
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.2"
   fake_async:
     dependency: transitive
     description:
@@ -57,46 +50,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
-  ffi:
-    dependency: transitive
-    description:
-      name: ffi
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.3"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_screen_recording:
-    dependency: "direct dev"
-    description:
-      path: "../flutter_screen_recording"
-      relative: true
-    source: path
-    version: "1.0.10"
-  flutter_screen_recording_platform_interface:
-    dependency: transitive
-    description:
-      path: "../flutter_screen_recording_platform_interface"
-      relative: true
-    source: path
-    version: "1.0.10"
-  flutter_screen_recording_web:
-    dependency: transitive
-    description:
-      path: "../flutter_screen_recording_web"
-      relative: true
-    source: path
-    version: "1.0.10"
   flutter_test:
     dependency: "direct dev"
-    description: flutter
-    source: sdk
-    version: "0.0.0"
-  flutter_web_plugins:
-    dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -108,19 +68,12 @@ packages:
     source: hosted
     version: "0.12.8"
   meta:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: meta
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.8"
-  open_file:
-    dependency: "direct dev"
-    description:
-      name: open_file
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.1"
   path:
     dependency: transitive
     description:
@@ -128,27 +81,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
-  permission_handler:
-    dependency: "direct dev"
-    description:
-      name: permission_handler
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.2.0+hotfix.3"
   plugin_platform_interface:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
-  quiver:
-    dependency: "direct main"
-    description:
-      name: quiver
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.3"
   sky_engine:
     dependency: transitive
     description: flutter
