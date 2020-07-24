@@ -16,7 +16,7 @@ abstract class FlutterScreenRecordingPlatform extends PlatformInterface {
   /// The default instance of [FlutterScreenRecordingPlatform] to use.
   ///
   /// Defaults to [MethodChannelUrlLauncher].
-  static MethodChannelFlutterScreenRecording get instance => _instance;
+  static FlutterScreenRecordingPlatform get instance => _instance;
 
   /// Platform-specific plugins should set this with their own platform-specific
   /// class that extends [UrlLauncherPlatform] when they register themselves.
