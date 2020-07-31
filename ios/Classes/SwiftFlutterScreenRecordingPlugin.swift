@@ -72,13 +72,14 @@ let screenSize = UIScreen.main.bounds
             recorder.isMicrophoneEnabled = recordAudio
             
             let videoSettings: [String : Any] = [
-                AVVideoCodecKey  : AVVideoCodecJPEG,
-                AVVideoWidthKey  : screenSize.width,
-                AVVideoCompressionPropertiesKey: [
-                    AVVideoQualityKey: 1,
-                    AVVideoAverageBitRateKey: 5000,
-                ],
-                AVVideoHeightKey : screenSize.height
+                AVVideoCodecKey  : AVVideoCodecH264,
+               AVVideoWidthKey  : screenSize.width,
+               AVVideoCompressionPropertiesKey: [
+                   //AVVideoQualityKey: 1,
+                   AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
+                   AVVideoAverageBitRateKey: 6000000,
+               ],
+               AVVideoHeightKey : screenSize.height
             ]
             //Create the asset writer input object which is actually used to write out the video
             self.videoWriterInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings);
