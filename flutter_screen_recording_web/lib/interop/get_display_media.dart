@@ -27,20 +27,12 @@ class navigator {
       Map<String, dynamic> mediaConstraints) async {
     try {
       final mediaDevices = HTML.window.navigator.mediaDevices;
-      if (JSUtils.hasProperty(mediaDevices, "getDisplayMedia")) {
-        final JS.JsObject arg = JS.JsObject.jsify(mediaConstraints);
+      final JS.JsObject arg = JS.JsObject.jsify(mediaConstraints);
 
-        final HTML.MediaStream jsStream =
-            await JSUtils.promiseToFuture<HTML.MediaStream>(
-                JSUtils.callMethod(mediaDevices, 'getDisplayMedia', [arg]));
-        return MediaStream(jsStream);
-      } else {
-        final HTML.MediaStream jsStream = await HTML.window.navigator
-            .getUserMedia(
-                video: {"mediaSource": 'screen'},
-                audio: mediaConstraints['audio'] ?? false);
-        return MediaStream(jsStream);
-      }
+      final HTML.MediaStream jsStream =
+          await JSUtils.promiseToFuture<HTML.MediaStream>(
+              JSUtils.callMethod(mediaDevices, 'getDisplayMedia', [arg]));
+      return MediaStream(jsStream);
     } catch (e) {
       throw 'Unable to getDisplayMedia: ${e.toString()}';
     }
