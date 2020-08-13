@@ -88,8 +88,8 @@ class FlutterScreenRecordingPlugin(
 
                 calculeResolution(metrics)
 
-                videoName = call.argument<String?>("name")
-                recordAudio = call.argument<Boolean?>("audio")
+                videoName = call.argument("name")
+                recordAudio = call.argument("audio")
 
                 startRecordScreen()
                 //result.success(true)
@@ -153,6 +153,10 @@ class FlutterScreenRecordingPlugin(
                 mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             }
             mMediaRecorder?.setOutputFile("${storePath}${videoName}.mp4")
+
+            val rotation = (registrar.activity().getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.orientation
+            mMediaRecorder?.setOrientationHint(rotation * 90)
+
             mMediaRecorder?.setVideoSize(mDisplayWidth, mDisplayHeight)
             mMediaRecorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
             mMediaRecorder?.setVideoEncodingBitRate(5 * mDisplayWidth * mDisplayHeight)
