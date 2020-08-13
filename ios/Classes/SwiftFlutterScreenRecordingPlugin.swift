@@ -5,7 +5,7 @@ import Photos
 
 public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
     
-let recorder = RPScreenRecorder.shared()
+    let recorder = RPScreenRecorder.shared()
 
 var videoOutputURL : URL?
 var videoWriter : AVAssetWriter?
@@ -28,7 +28,7 @@ let screenSize = UIScreen.main.bounds
     if(call.method == "startRecordScreen"){
          myResult = result
          let args = call.arguments as? Dictionary<String, Any>
-
+         
          self.recordAudio = (args?["audio"] as? Bool)!
          self.nameVideo = (args?["name"] as? String)!+".mp4"
          startRecording()
@@ -42,7 +42,8 @@ let screenSize = UIScreen.main.bounds
          result("")
     }
   }
-
+    
+    
 
     @objc func startRecording() {
 
@@ -54,7 +55,9 @@ let screenSize = UIScreen.main.bounds
         //Check the file does not already exist by deleting it if it does
         do {
             try FileManager.default.removeItem(at: videoOutputURL!)
-        } catch {}
+        } catch {
+            
+        }
 
         do {
             try videoWriter = AVAssetWriter(outputURL: videoOutputURL!, fileType: AVFileType.mp4)
@@ -64,53 +67,43 @@ let screenSize = UIScreen.main.bounds
             return;
         }
 
-        //Create the video settings
+        //Create the video and audio settings
         if #available(iOS 11.0, *) {
-            
-            var codec = AVVideoCodecJPEG;
-            
-            if(recordAudio){
-                codec = AVVideoCodecH264;
-            }
+            recorder.isMicrophoneEnabled = recordAudio
             
             let videoSettings: [String : Any] = [
-                AVVideoCodecKey  : codec,
-                AVVideoWidthKey  : screenSize.width,
-                AVVideoHeightKey : screenSize.height
+                AVVideoCodecKey  : AVVideoCodecH264,
+               AVVideoWidthKey  : screenSize.width,
+               AVVideoCompressionPropertiesKey: [
+                   //AVVideoQualityKey: 1,
+                   AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
+                   AVVideoAverageBitRateKey: 6000000,
+               ],
+               AVVideoHeightKey : screenSize.height
             ]
+            //Create the asset writer input object which is actually used to write out the video
+            self.videoWriterInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings);
+            self.videoWriterInput?.expectsMediaDataInRealTime = true;
+            self.videoWriter?.add(videoWriterInput!);
                         
             if(recordAudio){
-                
                 let audioOutputSettings: [String : Any] = [
                     AVNumberOfChannelsKey : 2,
                     AVFormatIDKey : kAudioFormatMPEG4AAC,
                     AVSampleRateKey: 44100,
+                    AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
                 ]
-                
-                audioInput = AVAssetWriterInput(mediaType: AVMediaType.audio, outputSettings: audioOutputSettings)
-                videoWriter?.add(audioInput)
-            
+                //Create the asset writer input object which is actually used to write out the audio
+                self.audioInput = AVAssetWriterInput(mediaType: AVMediaType.audio, outputSettings: audioOutputSettings)
+                self.audioInput?.expectsMediaDataInRealTime = true;
+                self.videoWriter?.add(audioInput!);
             }
-
-
-        //Create the asset writer input object whihc is actually used to write out the video
-         videoWriterInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings);
-         videoWriter?.add(videoWriterInput!);
-            
         }
 
         //Tell the screen recorder to start capturing and to call the handler
         if #available(iOS 11.0, *) {
             
-            if(recordAudio){
-                RPScreenRecorder.shared().isMicrophoneEnabled=true;
-            }else{
-                RPScreenRecorder.shared().isMicrophoneEnabled=false;
-
-            }
-            
-            RPScreenRecorder.shared().startCapture(
-            handler: { (cmSampleBuffer, rpSampleType, error) in
+            recorder.startCapture(handler: { (cmSampleBuffer, rpSampleType, error) in
                 guard error == nil else {
                     //Handle error
                     print("Error starting capture");
@@ -119,32 +112,34 @@ let screenSize = UIScreen.main.bounds
                 }
 
                 switch rpSampleType {
-                case RPSampleBufferType.video:
-                    print("writing sample....");
-                    if self.videoWriter?.status == AVAssetWriter.Status.unknown {
-
-                        if (( self.videoWriter?.startWriting ) != nil) {
-                            print("Starting writing");
-                            self.myResult!(true)
-                            self.videoWriter?.startWriting()
-                            self.videoWriter?.startSession(atSourceTime:  CMSampleBufferGetPresentationTimeStamp(cmSampleBuffer))
-                        }
-                    }
-
-                    if self.videoWriter?.status == AVAssetWriter.Status.writing {
-                        if (self.videoWriterInput?.isReadyForMoreMediaData == true) {
-                            print("Writting a sample");
-                            if  self.videoWriterInput?.append(cmSampleBuffer) == false {
-                                print(" we have a problem writing video")
-                                self.myResult!(false)
+                    case RPSampleBufferType.video:
+                        print("Writing video...");
+                        if self.videoWriter?.status == AVAssetWriter.Status.unknown {
+                           self.myResult!(true)
+                           self.videoWriter?.startWriting()
+                           self.videoWriter?.startSession(atSourceTime:  CMSampleBufferGetPresentationTimeStamp(cmSampleBuffer))
+                        }else if self.videoWriter?.status == AVAssetWriter.Status.writing {
+                            if (self.videoWriterInput?.isReadyForMoreMediaData == true) {
+                                print("Append sample...");
+                                if  self.videoWriterInput?.append(cmSampleBuffer) == false {
+                                    print("Problems writing video")
+                                    self.myResult!(false)
+                                }
                             }
                         }
+                    case RPSampleBufferType.audioMic:
+                        if(self.recordAudio){
+                            print("Writing audio....");
+                            if self.audioInput?.isReadyForMoreMediaData == true {
+                                print("starting audio....");
+                                if self.audioInput?.append(cmSampleBuffer) == false {
+                                        print("Problems writing audio")
+                                }
+                            }
+                        }
+                    default:
+                       print("not a video sample, so ignore");
                     }
-
-
-                default:
-                   print("not a video sample, so ignore");
-                }
             } ){(error) in
                         guard error == nil else {
                            //Handle error
@@ -161,32 +156,24 @@ let screenSize = UIScreen.main.bounds
     @objc func stopRecording() {
         //Stop Recording the screen
         if #available(iOS 11.0, *) {
-            RPScreenRecorder.shared().stopCapture( handler: { (error) in
-                print("stopping recording");
+            recorder.stopCapture( handler: { (error) in
+                print("Stopping recording...");
             })
         } else {
           //  Fallback on earlier versions
         }
 
         self.videoWriterInput?.markAsFinished();
-        self.videoWriter?.finishWriting {
-            print("finished writing video");
+        if(self.recordAudio) {
+             self.audioInput?.markAsFinished();
+        }
 
+        self.videoWriter?.finishWriting {
+            print("Finished writing video");
             //Now save the video
             PHPhotoLibrary.shared().performChanges({
                 PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: self.videoOutputURL!)
-            }) { saved, error in
-                if saved {
-                    let alertController = UIAlertController(title: "Your video was successfully saved", message: nil, preferredStyle: .alert)
-                    let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                    alertController.addAction(defaultAction)
-                    //self.present(alertController, animated: true, completion: nil)
-                }
-                if error != nil {
-                    print("Video did not save for some reason", error.debugDescription);
-                    debugPrint(error?.localizedDescription ?? "error is nil");
-                }
-            }
+            })
         }
     
 }
