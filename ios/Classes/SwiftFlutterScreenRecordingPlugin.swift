@@ -15,7 +15,6 @@ var videoWriterInput : AVAssetWriterInput?
 var nameVideo: String = ""
 var recordAudio: Bool = false;
 var myResult: FlutterResult?
-let screenSize = UIScreen.main.bounds
     
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "flutter_screen_recording", binaryMessenger: registrar.messenger())
@@ -73,13 +72,13 @@ let screenSize = UIScreen.main.bounds
             
             let videoSettings: [String : Any] = [
                 AVVideoCodecKey  : AVVideoCodecH264,
-               AVVideoWidthKey  : screenSize.width,
-               AVVideoCompressionPropertiesKey: [
-                   //AVVideoQualityKey: 1,
-                   AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
-                   AVVideoAverageBitRateKey: 6000000,
+                AVVideoWidthKey  : UIScreen.main.bounds.width,
+                AVVideoHeightKey : UIScreen.main.bounds.height,
+                AVVideoCompressionPropertiesKey: [
+                //AVVideoQualityKey: 1,
+                AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
+                AVVideoAverageBitRateKey: 6000000
                ],
-               AVVideoHeightKey : screenSize.height
             ]
             //Create the asset writer input object which is actually used to write out the video
             self.videoWriterInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings);
