@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
-import 'package:quiver/async.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_file/open_file.dart';
 import 'package:foreground_service/foreground_service.dart';
+import 'package:quiver/async.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,6 +13,7 @@ class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
+
 void maybeStartFGS() async {
   ///if the app was killed+relaunched, this function will be executed again
   ///but if the foreground service stayed alive,
@@ -23,10 +24,8 @@ void maybeStartFGS() async {
     //necessity of editMode is dubious (see function comments)
     await ForegroundService.notification.startEditMode();
 
-    await ForegroundService.notification
-        .setTitle("Example Title: ${DateTime.now()}");
-    await ForegroundService.notification
-        .setText("Example Text: ${DateTime.now()}");
+    await ForegroundService.notification.setTitle("Example Title: ${DateTime.now()}");
+    await ForegroundService.notification.setText("Example Text: ${DateTime.now()}");
 
     await ForegroundService.notification.finishEditMode();
 
@@ -153,7 +152,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   stopScreenRecord() async {
-
     String path = await FlutterScreenRecording.stopRecordScreen;
     setState(() {
       recording = !recording;
