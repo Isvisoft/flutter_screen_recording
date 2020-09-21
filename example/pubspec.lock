@@ -82,7 +82,7 @@ packages:
     source: sdk
     version: "0.0.0"
   foreground_service:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: foreground_service
       url: "https://pub.dartlang.org"

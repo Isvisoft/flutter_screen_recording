@@ -10,3 +10,5 @@
 build/
 
 *.jar
+
+example/android/app/release/*
