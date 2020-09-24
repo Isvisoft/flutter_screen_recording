@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
-import 'package:quiver/async.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_file/open_file.dart';
+import 'package:quiver/async.dart';
 
 void main() => runApp(MyApp());
 
@@ -50,6 +50,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -89,9 +94,10 @@ class _MyAppState extends State<MyApp> {
 
   startScreenRecord(bool audio) async {
     bool start = false;
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     if (audio) {
-      start = await FlutterScreenRecording.startRecordScreenAndAudio("Title");
+      start = await FlutterScreenRecording.startRecordScreenAndAudio("Title" + _time.toString());
     } else {
       start = await FlutterScreenRecording.startRecordScreen("Title");
     }
