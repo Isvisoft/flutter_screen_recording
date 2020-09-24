@@ -84,11 +84,10 @@ class FlutterScreenRecordingPlugin(
 
                 mProjectionManager = registrar.context().applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
 
-                videoName = call.argument<String?>("name")
-                recordAudio = call.argument<Boolean?>("audio")
-                initMediaRecorder();
+                videoName = call.argument("name")
+                recordAudio = call.argument("audio")
+//                initMediaRecorder();
                 startRecordScreen()
-                //result.success(true)
             } catch (e: Exception) {
                 println("Error onMethodCall startRecordScreen")
                 println(e.message)
@@ -117,7 +116,7 @@ class FlutterScreenRecordingPlugin(
         val screenRatio : Double = (screenSize.x.toDouble()  / screenSize.y.toDouble())
 
         println(screenSize.x.toString() + " --- " + screenSize.y.toString())
-        var height : Double = mDisplayWidth / screenRatio;
+        val height : Double = mDisplayWidth / screenRatio;
         println("height - " + height)
 
         mDisplayHeight = height.toInt()
@@ -133,43 +132,37 @@ class FlutterScreenRecordingPlugin(
         println("$mDisplayWidth x $mDisplayHeight")
     }
 
-    fun initMediaRecorder() {
-        mMediaRecorder?.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
-        mMediaRecorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE)
-
-        //mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mMediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);//AAC //HE_AAC
-        mMediaRecorder?.setAudioEncodingBitRate(16*44100);
-        mMediaRecorder?.setAudioSamplingRate(44100);
-        mMediaRecorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
-
-        println("bbb" + mDisplayWidth.toString() + " " + mDisplayHeight);
-        mMediaRecorder?.setVideoSize(mDisplayWidth, mDisplayHeight)
-        mMediaRecorder?.setVideoFrameRate(30)
-
-        mMediaRecorder?.setOutputFile("${storePath}${videoName}.mp4")
-
-        println("file --- "+ "${storePath}${videoName}.mp4")
-
-        mMediaRecorder?.setVideoEncodingBitRate(5 * mDisplayWidth * mDisplayHeight)
-        mMediaRecorder?.prepare()
-    }
-
     fun startRecordScreen() {
         try {
-            //mMediaRecorder?.prepare()
+            mMediaRecorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE)
+            if (recordAudio!!) {
+                mMediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC);
+                mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                mMediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            } else {
+                mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            }
+            mMediaRecorder?.setOutputFile("${storePath}${videoName}.mp4")
 
+            val rotation = (registrar.activity().getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.orientation
+            mMediaRecorder?.setOrientationHint(rotation * 90)
+
+            mMediaRecorder?.setVideoSize(mDisplayWidth, mDisplayHeight)
+            mMediaRecorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
+            mMediaRecorder?.setVideoEncodingBitRate(5 * mDisplayWidth * mDisplayHeight)
+            mMediaRecorder?.setVideoFrameRate(60)
+
+
+            mMediaRecorder?.prepare()
             mMediaRecorder?.start()
-
         } catch (e: IOException) {
-            println("ERR");
             Log.d("--INIT-RECORDER", e.message)
             println("Error startRecordScreen")
             println(e.message)
         }
 
         val permissionIntent = mProjectionManager?.createScreenCaptureIntent()
+//        ActivityCompat.startActivityForResult((registrar.context().applicationContext as FlutterApplication).currentActivity, permissionIntent!!, SCREEN_RECORD_REQUEST_CODE, null)
         ActivityCompat.startActivityForResult(registrar.activity(), permissionIntent!!, SCREEN_RECORD_REQUEST_CODE, null)
 
     }
