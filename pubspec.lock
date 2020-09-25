@@ -55,18 +55,18 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_foreground_plugin:
+    dependency: "direct main"
+    description:
+      name: flutter_foreground_plugin
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
     source: sdk
     version: "0.0.0"
-  foreground_service:
-    dependency: "direct main"
-    description:
-      name: foreground_service
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.3.0"
   matcher:
     dependency: transitive
     description:
