@@ -1,3 +1,6 @@
+## 1.1.0
+* Foreground service for Android 10
+
 ## 1.0.10
 * Update docs
 
