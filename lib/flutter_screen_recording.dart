@@ -7,13 +7,14 @@ import 'package:foreground_service/foreground_service.dart';
 class FlutterScreenRecording {
   static const MethodChannel _channel = const MethodChannel('flutter_screen_recording');
 
-  static Future<bool> startRecordScreen(String name) async {
-    await _maybeStartFGS();
+  static Future<bool> startRecordScreen(String name, {String titleNotification, String messageNotification}) async {
+    await _maybeStartFGS(titleNotification, messageNotification);
     final bool start = await _channel.invokeMethod('startRecordScreen', {"name": name, "audio": false});
     return start;
   }
 
-  static Future<bool> startRecordScreenAndAudio(String name) async {
+  static Future<bool> startRecordScreenAndAudio(String name, {String titleNotification, String messageNotification}) async {
+    await _maybeStartFGS(titleNotification, messageNotification);
     final bool start = await _channel.invokeMethod('startRecordScreen', {"name": name, "audio": true});
     return start;
   }
@@ -26,7 +27,7 @@ class FlutterScreenRecording {
     return path;
   }
 
-  static void _maybeStartFGS() async {
+  static void _maybeStartFGS(String titleNotification, String messageNotification) async {
     if (Platform.isAndroid) {
       ///if the app was killed+relaunched, this function will be executed again
       ///but if the foreground service stayed alive,
@@ -37,8 +38,8 @@ class FlutterScreenRecording {
         //necessity of editMode is dubious (see function comments)
         await ForegroundService.notification.startEditMode();
 
-        await ForegroundService.notification.setTitle("Example Title: ${DateTime.now()}");
-        await ForegroundService.notification.setText("Example Text: ${DateTime.now()}");
+        await ForegroundService.notification.setTitle(titleNotification);
+        await ForegroundService.notification.setText(messageNotification);
 
         await ForegroundService.notification.finishEditMode();
 

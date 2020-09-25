@@ -97,9 +97,9 @@ class _MyAppState extends State<MyApp> {
     await Future.delayed(const Duration(milliseconds: 1000));
 
     if (audio) {
-      start = await FlutterScreenRecording.startRecordScreenAndAudio("Title" + _time.toString());
+      start = await FlutterScreenRecording.startRecordScreenAndAudio("Title" + _time.toString(),  titleNotification:"dsffad", messageNotification: "sdffd");
     } else {
-      start = await FlutterScreenRecording.startRecordScreen("Title");
+      start = await FlutterScreenRecording.startRecordScreen("Title", titleNotification:"dsffad", messageNotification: "sdffd");
     }
 
     if (start) {
