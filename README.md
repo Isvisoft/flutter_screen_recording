@@ -36,6 +36,8 @@ Require and add the following permissions in your manifest:
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 ```
 
+In the last Android version is requiered use a foreground service for record the screen, we added the [flutter foreground plugin](https://pub.dev/packages/flutter_foreground_plugin). 
+
 ## iOS
 
 You only need add the permission message on the Info.plist 
