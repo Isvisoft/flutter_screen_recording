@@ -66,6 +66,7 @@ class FlutterScreenRecordingPlugin(
                 mMediaProjection = mProjectionManager?.getMediaProjection(resultCode, data)
                 mMediaProjection?.registerCallback(mMediaProjectionCallback, null)
                 mVirtualDisplay = createVirtualDisplay()
+
                 _result.success(true)
                 return true
             } else {
@@ -114,20 +115,24 @@ class FlutterScreenRecordingPlugin(
 
     fun calculeResolution(screenSize: Point) {
 
-        val screenRatio: Double = (screenSize.x.toDouble() / screenSize.y.toDouble())
+//        val screenRatio: Double = (screenSize.x.toDouble() / screenSize.y.toDouble())
+//
+//        println(screenSize.x.toString() + " --- " + screenSize.y.toString())
+//        var height: Double = mDisplayWidth / screenRatio;
+//        println("height - " + height)
+//
+//        mDisplayHeight = height.toInt()
 
-        println(screenSize.x.toString() + " --- " + screenSize.y.toString())
-        var height: Double = mDisplayWidth / screenRatio;
-        println("height - " + height)
-
-        mDisplayHeight = height.toInt()
+        // Use the actual screen size, same as on IOS
+        mDisplayWidth = screenSize.x;
+        mDisplayHeight = screenSize.y;
 
 /*        mDisplayWidth = 2560;
         mDisplayHeight = 1440;*/
 
-        println("Scaled Density")
-        //println(metrics.scaledDensity)
-        println("Original Resolution ")
+//        println("Scaled Density")
+//        //println(metrics.scaledDensity)
+//        println("Original Resolution ")
         //println(metrics.widthPixels.toString() + " x " + metrics.heightPixels)
         println("Calcule Resolution ")
         println("$mDisplayWidth x $mDisplayHeight")
@@ -147,6 +152,11 @@ class FlutterScreenRecordingPlugin(
         }
 
         mMediaRecorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
+
+        val windowManager = registrar.context().applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val screenSize = Point()
+        windowManager.defaultDisplay.getRealSize(screenSize);
+        calculeResolution(screenSize);
 
         println(mDisplayWidth.toString() + " " + mDisplayHeight);
         mMediaRecorder?.setVideoSize(mDisplayWidth, mDisplayHeight)

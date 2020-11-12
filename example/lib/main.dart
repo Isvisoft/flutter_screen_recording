@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
@@ -104,6 +105,7 @@ class _MyAppState extends State<MyApp> {
 
     if (start) {
       setState(() => recording = !recording);
+      print("Recording started at $_time");
     }
 
     return start;
@@ -113,7 +115,12 @@ class _MyAppState extends State<MyApp> {
     String path = await FlutterScreenRecording.stopRecordScreen;
     setState(() {
       recording = !recording;
+      print("Recording stopped at $_time");
     });
+    File videoFile = File(path);
+    int fileSizeBytes = await videoFile.length();
+    print('Video file size $fileSizeBytes bytes');
+
     print("Opening video");
     print(path);
     OpenFile.open(path);

@@ -11,4 +11,7 @@ build/
 
 *.jar
 
-example/android/app/release/*
+example/android/app/release/*./example/ios/.symlinks/plugins/flutter_foreground_plugin
+./example/ios/.symlinks/plugins/flutter_screen_recording
+./example/ios/.symlinks/plugins/permission_handler
+./example/ios/.symlinks/plugins/open_file

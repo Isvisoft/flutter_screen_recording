@@ -1,5 +1,7 @@
 PODS:
   - Flutter (1.0.0)
+  - flutter_foreground_plugin (0.0.1):
+    - Flutter
   - flutter_screen_recording (0.0.1):
     - Flutter
   - open_file (0.0.1):
@@ -9,6 +11,7 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - flutter_foreground_plugin (from `.symlinks/plugins/flutter_foreground_plugin/ios`)
   - flutter_screen_recording (from `.symlinks/plugins/flutter_screen_recording/ios`)
   - open_file (from `.symlinks/plugins/open_file/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
@@ -16,6 +19,8 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  flutter_foreground_plugin:
+    :path: ".symlinks/plugins/flutter_foreground_plugin/ios"
   flutter_screen_recording:
     :path: ".symlinks/plugins/flutter_screen_recording/ios"
   open_file:
@@ -25,6 +30,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_foreground_plugin: 685583f00ade6168e38f08fd11d6cc0402ebb975
   flutter_screen_recording: f56d857cef9c6338f74909a15f60b3e5dc5ffb38
   open_file: 02eb5cb6b21264bd3a696876f5afbfb7ca4f4b7d
   permission_handler: 40520ab8ad1bb78a282b832464e995ec87f77ec6
