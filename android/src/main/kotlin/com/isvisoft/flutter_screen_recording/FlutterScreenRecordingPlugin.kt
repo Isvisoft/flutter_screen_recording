@@ -56,7 +56,7 @@ class FlutterScreenRecordingPlugin(
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent): Boolean {
 
         if (requestCode == SCREEN_RECORD_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
@@ -87,6 +87,9 @@ class FlutterScreenRecordingPlugin(
 
                 videoName = call.argument<String?>("name")
                 recordAudio = call.argument<Boolean?>("audio")
+                val width = call.argument<Int?>("width");
+                val height = call.argument<Int?>("height");
+                calculeResolution(width, height);
                 initMediaRecorder();
                 startRecordScreen()
                 //result.success(true)
@@ -113,7 +116,11 @@ class FlutterScreenRecordingPlugin(
         }
     }
 
-    fun calculeResolution(screenSize: Point) {
+    fun calculeResolution(width: Int?, height: Int?) {
+
+        val windowManager = registrar.context().applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val screenSize = Point()
+        windowManager.defaultDisplay.getRealSize(screenSize);
 
 //        val screenRatio: Double = (screenSize.x.toDouble() / screenSize.y.toDouble())
 //
@@ -123,9 +130,9 @@ class FlutterScreenRecordingPlugin(
 //
 //        mDisplayHeight = height.toInt()
 
-        // Use the actual screen size, same as on IOS
-        mDisplayWidth = screenSize.x;
-        mDisplayHeight = screenSize.y;
+        // Default to the actual screen size, same as on IOS
+        mDisplayWidth = width ?: screenSize.x;
+        mDisplayHeight = height ?: screenSize.y;
 
 /*        mDisplayWidth = 2560;
         mDisplayHeight = 1440;*/
@@ -152,11 +159,6 @@ class FlutterScreenRecordingPlugin(
         }
 
         mMediaRecorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
-
-        val windowManager = registrar.context().applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val screenSize = Point()
-        windowManager.defaultDisplay.getRealSize(screenSize);
-        calculeResolution(screenSize);
 
         println(mDisplayWidth.toString() + " " + mDisplayHeight);
         mMediaRecorder?.setVideoSize(mDisplayWidth, mDisplayHeight)
@@ -209,9 +211,9 @@ class FlutterScreenRecordingPlugin(
         val windowManager = registrar.context().applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val metrics: DisplayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(metrics)
-        val screenSize = Point()
-        windowManager.defaultDisplay.getRealSize(screenSize);
-        calculeResolution(screenSize)
+//        val screenSize = Point()
+//        windowManager.defaultDisplay.getRealSize(screenSize);
+//        calculeResolution(screenSize)
         mScreenDensity = metrics.densityDpi
         println("density " + mScreenDensity.toString())
         println("msurface " + mMediaRecorder?.getSurface())

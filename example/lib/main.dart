@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
@@ -19,11 +21,17 @@ class _MyAppState extends State<MyApp> {
   int _time = 0;
 
   requestPermissions() async {
-    await PermissionHandler().requestPermissions([
-      PermissionGroup.storage,
-      PermissionGroup.photos,
-      PermissionGroup.microphone,
-    ]);
+    // await PermissionHandler().requestPermissions([
+    //   PermissionGroup.storage,
+    //   PermissionGroup.photos,
+    //   PermissionGroup.microphone,
+    // ]);
+
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.photos,
+      Permission.storage,
+      Permission.microphone,
+    ].request();
   }
 
   @override
@@ -98,9 +106,20 @@ class _MyAppState extends State<MyApp> {
     await Future.delayed(const Duration(milliseconds: 1000));
 
     if (audio) {
-      start = await FlutterScreenRecording.startRecordScreenAndAudio("Title" + _time.toString(),  titleNotification:"dsffad", messageNotification: "sdffd");
+      start = await FlutterScreenRecording.startRecordScreenAndAudio(
+          "Title" + _time.toString(),
+          titleNotification: "dsffad",
+          messageNotification: "sdffd");
     } else {
-      start = await FlutterScreenRecording.startRecordScreen("Title", titleNotification:"dsffad", messageNotification: "sdffd");
+      int width, height;
+      // // Record screen at quarter size, ie file size of 1/16 th
+      // Size win = window.physicalSize / 4; // Reduce size
+      // width = win.width ~/ 10 * 10; // Round to multiple of 10
+      // height = win.height ~/ 10 * 10;
+      start = await FlutterScreenRecording.startRecordScreen("Title",
+          width: width, height: height,
+          titleNotification: "dsffad", messageNotification: "sdffd",
+      );
     }
 
     if (start) {
