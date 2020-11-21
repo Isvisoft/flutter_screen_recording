@@ -11,7 +11,7 @@ class FlutterScreenRecording {
 
   /// Records the device screen, without audio, to a video file named
   /// [name].mp4 on the device.
-  /// The parameters [width] and [height] control the dimensions
+  /// The parameters [width] and [height] (in pixels) control the dimensions
   /// of the video that
   /// is produced, and therefore also the size of the video file. The full
   /// screen area is always recorded.
@@ -25,7 +25,7 @@ class FlutterScreenRecording {
   /// recorded.
   ///
   /// Note that on some platforms it may cause an error if the video dimensions
-  /// are not multiples of ten.
+  /// are not multiples of ten. See the example project for code.
   static Future<bool> startRecordScreen(String name,
       {int width, int height,
       String titleNotification,

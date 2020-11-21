@@ -112,7 +112,7 @@ class _MyAppState extends State<MyApp> {
           messageNotification: "sdffd");
     } else {
       int width, height;
-      // // Record screen at quarter size, ie file size of 1/16 th
+      // // Record screen at quarter size, ie file size reduced by x16
       // Size win = window.physicalSize / 4; // Reduce size
       // width = win.width ~/ 10 * 10; // Round to multiple of 10
       // height = win.height ~/ 10 * 10;

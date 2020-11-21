@@ -120,7 +120,7 @@ class FlutterScreenRecordingPlugin(
 
         val windowManager = registrar.context().applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val screenSize = Point()
-        windowManager.defaultDisplay.getRealSize(screenSize);
+        windowManager.defaultDisplay.getRealSize(screenSize); // in pixels
 
 //        val screenRatio: Double = (screenSize.x.toDouble() / screenSize.y.toDouble())
 //

@@ -30,17 +30,17 @@ var myResult: FlutterResult?
          
         self.recordAudio = (args?["audio"] as? Bool?)! ?? false
         self.nameVideo = (args?["name"] as? String)!+".mp4";
-        var width = args?["width"];
+        var width = args?["width"]; // in pixels
         if(width == nil || width is NSNull) {
-            width = Int32(Int(UIScreen.main.bounds.width));
+            width = Int32(UIScreen.main.nativeBounds.width); // pixels
         } else {
-            width = Int32(width as! Int32)
+            width = Int32(width as! Int32);
         }
-        var height = args?["height"]
+        var height = args?["height"] // in pixels
         if(height == nil || height is NSNull) {
-            height = Int32(UIScreen.main.bounds.height);
+            height = Int32(UIScreen.main.nativeBounds.height); // pixels
         } else {
-            height = Int32(height as! Int32)
+            height = Int32(height as! Int32);
         }
         startRecording(
             width: width as! Int32 ,
@@ -59,7 +59,7 @@ var myResult: FlutterResult?
     
 
     @objc func startRecording(width: Int32, height: Int32) {
-
+        NSLog("startRecording: w x h = \(width) x \(height) pixels");
         //Use ReplayKit to record the screen
         //Create the file path to write to
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
