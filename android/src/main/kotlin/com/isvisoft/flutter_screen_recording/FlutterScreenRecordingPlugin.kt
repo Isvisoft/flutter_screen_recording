@@ -148,11 +148,16 @@ class FlutterScreenRecordingPlugin(
     fun initMediaRecorder() {
         mMediaRecorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE)
 
+        // This has to come *before* setOutputFormat
+        if (recordAudio!!) {
+            mMediaRecorder?.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
+        }
+
         //mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 
-        if (recordAudio!!) {
-            mMediaRecorder?.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
+        // This configuration has to come after setOutputFormat
+        if(recordAudio!!) {
             mMediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);//AAC //HE_AAC
             mMediaRecorder?.setAudioEncodingBitRate(16 * 44100);
             mMediaRecorder?.setAudioSamplingRate(44100);
