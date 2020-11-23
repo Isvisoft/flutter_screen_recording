@@ -28,9 +28,23 @@ var myResult: FlutterResult?
          myResult = result
          let args = call.arguments as? Dictionary<String, Any>
          
-         self.recordAudio = (args?["audio"] as? Bool)!
-         self.nameVideo = (args?["name"] as? String)!+".mp4"
-         startRecording()
+        self.recordAudio = (args?["audio"] as? Bool?)! ?? false
+        self.nameVideo = (args?["name"] as? String)!+".mp4";
+        var width = args?["width"]; // in pixels
+        if(width == nil || width is NSNull) {
+            width = Int32(UIScreen.main.nativeBounds.width); // pixels
+        } else {
+            width = Int32(width as! Int32);
+        }
+        var height = args?["height"] // in pixels
+        if(height == nil || height is NSNull) {
+            height = Int32(UIScreen.main.nativeBounds.height); // pixels
+        } else {
+            height = Int32(height as! Int32);
+        }
+        startRecording(
+            width: width as! Int32 ,
+            height: height as! Int32);
 
     }else if(call.method == "stopRecordScreen"){
         if(videoWriter != nil){
@@ -44,8 +58,8 @@ var myResult: FlutterResult?
     
     
 
-    @objc func startRecording() {
-
+    @objc func startRecording(width: Int32, height: Int32) {
+        NSLog("startRecording: w x h = \(width) x \(height) pixels");
         //Use ReplayKit to record the screen
         //Create the file path to write to
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
@@ -72,8 +86,8 @@ var myResult: FlutterResult?
             
             let videoSettings: [String : Any] = [
                 AVVideoCodecKey  : AVVideoCodecH264,
-                AVVideoWidthKey  : UIScreen.main.bounds.width,
-                AVVideoHeightKey : UIScreen.main.bounds.height,
+                AVVideoWidthKey  : NSNumber.init(value: width),
+                AVVideoHeightKey : NSNumber.init(value:height),
                 AVVideoCompressionPropertiesKey: [
                 //AVVideoQualityKey: 1,
                 AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
@@ -112,14 +126,14 @@ var myResult: FlutterResult?
 
                 switch rpSampleType {
                     case RPSampleBufferType.video:
-                        print("Writing video...");
+//                        print("Writing video...");
                         if self.videoWriter?.status == AVAssetWriter.Status.unknown {
                            self.myResult!(true)
                            self.videoWriter?.startWriting()
                            self.videoWriter?.startSession(atSourceTime:  CMSampleBufferGetPresentationTimeStamp(cmSampleBuffer))
                         }else if self.videoWriter?.status == AVAssetWriter.Status.writing {
                             if (self.videoWriterInput?.isReadyForMoreMediaData == true) {
-                                print("Append sample...");
+//                                print("Append sample...");
                                 if  self.videoWriterInput?.append(cmSampleBuffer) == false {
                                     print("Problems writing video")
                                     self.myResult!(false)
@@ -128,7 +142,7 @@ var myResult: FlutterResult?
                         }
                     case RPSampleBufferType.audioMic:
                         if(self.recordAudio){
-                            print("Writing audio....");
+//                            print("Writing audio....");
                             if self.audioInput?.isReadyForMoreMediaData == true {
                                 print("starting audio....");
                                 if self.audioInput?.append(cmSampleBuffer) == false {
@@ -137,7 +151,8 @@ var myResult: FlutterResult?
                             }
                         }
                     default:
-                       print("not a video sample, so ignore");
+//                       print("not a video sample, so ignore");
+                        break;
                     }
             } ){(error) in
                         guard error == nil else {
