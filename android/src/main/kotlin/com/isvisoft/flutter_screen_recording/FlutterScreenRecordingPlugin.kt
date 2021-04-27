@@ -71,6 +71,7 @@ class FlutterScreenRecordingPlugin(
                 return true
             } else {
                 _result.success(false)
+                return false
             }
         }
 
