@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foreground_plugin/flutter_foreground_plugin.dart';
 
@@ -27,9 +26,9 @@ class FlutterScreenRecording {
   /// Note that on some platforms it may cause an error if the video dimensions
   /// are not multiples of ten. See the example project for code.
   static Future<bool> startRecordScreen(String name,
-      {int width, int height,
-      String titleNotification,
-      String messageNotification}) async {
+      {int? width, int? height,
+      String? titleNotification,
+      String? messageNotification}) async {
     await _maybeStartFGS(titleNotification, messageNotification);
     if( width == null || height == null) {
       width = null;
@@ -46,7 +45,7 @@ class FlutterScreenRecording {
   /// [name].mp4 on the device. See [FlutterScreenRecoding.startRecordScreen]
   /// for information about the parameters.
   static Future<bool> startRecordScreenAndAudio(String name,
-      {int width, int height , String titleNotification, String messageNotification}) async {
+      {int? width, int? height , String? titleNotification, String? messageNotification}) async {
 
     await _maybeStartFGS(titleNotification, messageNotification);
     if( width == null || height == null) {
@@ -69,7 +68,7 @@ class FlutterScreenRecording {
 
 
   static _maybeStartFGS(
-      String titleNotification, String messageNotification) async {
+      String? titleNotification, String? messageNotification) async {
 
     if (Platform.isAndroid) {
       await FlutterForegroundPlugin.setServiceMethodInterval(seconds: 5);
