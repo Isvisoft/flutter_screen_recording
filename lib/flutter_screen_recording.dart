@@ -25,7 +25,7 @@ class FlutterScreenRecording {
   ///
   /// Note that on some platforms it may cause an error if the video dimensions
   /// are not multiples of ten. See the example project for code.
-  static Future<bool> startRecordScreen(String name,
+  static Future<bool?> startRecordScreen(String name,
       {int? width, int? height,
       String? titleNotification,
       String? messageNotification}) async {
@@ -34,7 +34,7 @@ class FlutterScreenRecording {
       width = null;
       height = null;
     }
-    final bool start = await _channel.invokeMethod('startRecordScreen',
+    final bool? start = await _channel.invokeMethod('startRecordScreen',
         {"name": name, "audio": false, "width": width,
           "height": height});
     return start;
@@ -44,7 +44,7 @@ class FlutterScreenRecording {
   /// Records the device screen, with audio, to a video file named
   /// [name].mp4 on the device. See [FlutterScreenRecoding.startRecordScreen]
   /// for information about the parameters.
-  static Future<bool> startRecordScreenAndAudio(String name,
+  static Future<bool?> startRecordScreenAndAudio(String name,
       {int? width, int? height , String? titleNotification, String? messageNotification}) async {
 
     await _maybeStartFGS(titleNotification, messageNotification);
@@ -52,7 +52,7 @@ class FlutterScreenRecording {
       width = null;
       height = null;
     }
-    final bool start = await _channel
+    final bool? start = await _channel
         .invokeMethod('startRecordScreen', {"name": name, "audio": true,
     "width": width, "height": height});
     return start;
