@@ -2,16 +2,19 @@ name: flutter_screen_recording
 description: A new Flutter plugin for record the screen. This plugin can be used for record the screen on android and iOS devices.
 version: 1.1.0
 homepage: 'https://github.com/Isvisoft/flutter_screen_recording'
+publish_to: none
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
   flutter: ^1.10.0
 
 dependencies:
   flutter:
     sdk: flutter
 #  foreground_service: ^1.3.0
-  flutter_foreground_plugin: ^0.4.0
+  flutter_foreground_plugin:
+    git:
+      url: https://github.com/jja08111/flutter_foreground_service_plugin
 
 dev_dependencies:
   flutter_test:
