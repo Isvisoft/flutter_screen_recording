@@ -10,11 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_screen_recording_platform_interface:
-    path: ../flutter_screen_recording_platform_interface
-  flutter_screen_recording_web:
-    path: ../flutter_screen_recording_web
-
+  flutter_screen_recording_platform_interface: 1.0.10
+  flutter_screen_recording_web: 1.0.10
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
