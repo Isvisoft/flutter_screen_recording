@@ -10,7 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_screen_recording_platform_interface: 1.0.10
+  flutter_screen_recording_platform_interface:
+    path: ../flutter_screen_recording_platform_interface
   flutter_web_plugins:
     sdk: flutter
   js: ^0.6.2
