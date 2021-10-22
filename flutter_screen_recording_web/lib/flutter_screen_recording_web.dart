@@ -14,6 +14,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   String name;
   MediaRecorder mediaRecorder;
   Blob recordedChunks;
+  String mimeType;
 
   static registerWith(Registrar registrar) {
     FlutterScreenRecordingPlatform.instance = WebFlutterScreenRecording();
@@ -62,6 +63,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       this.mediaRecorder.addEventListener('dataavailable', (Event event) {
         print("datavailable ${event.runtimeType}");
         recordedChunks = JsObject.fromBrowserObject(event)['data'];
+        this.mimeType = mimeType;
         print("blob size: ${recordedChunks?.size ?? 'empty'}");
       });
 
@@ -69,7 +71,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
 
       return true;
     } on Error catch (e) {
-      print(e.toString());
+      print("--->" + e.toString());
       return false;
     }
   }
@@ -82,7 +84,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       this.stream.getTracks().forEach((element) => element.stop());
       this.stream = null;
       final a = document.createElement("a") as AnchorElement;
-      final url = Url.createObjectUrl(new Blob(List<dynamic>.from([recordedChunks]), "video/mp4"));
+      final url = Url.createObjectUrl(new Blob(List<dynamic>.from([recordedChunks]), this.mimeType));
       document.body.append(a);
       a.style.display = "none";
       a.href = url;
