@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
   flutter_screen_recording_platform_interface:
     git:
-      url: https://github.com/vvalladolid/flutter_screen_recording.git
+      url: https://github.com/vvalladolidIV/flutter_screen_recording.git
       path: flutter_screen_recording_platform_interface
       ref: web-v
   flutter_web_plugins:
