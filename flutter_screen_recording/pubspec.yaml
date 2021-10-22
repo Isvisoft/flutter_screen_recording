@@ -16,6 +16,7 @@ dependencies:
       path: flutter_screen_recording_platform_interface
       ref: web-v
   flutter_screen_recording_web:
+    git:
       url: https://github.com/vvalladolidIV/flutter_screen_recording.git
       path: flutter_screen_recording_web
       ref: web-v
