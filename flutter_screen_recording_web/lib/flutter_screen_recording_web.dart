@@ -81,10 +81,8 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       mediaRecorder = null;
       this.stream.getTracks().forEach((element) => element.stop());
       this.stream = null;
-
       final a = document.createElement("a") as AnchorElement;
-      final url = Url.createObjectUrl(
-          new Blob(List<dynamic>.from([recordedChunks]), "video/webm"));
+      final url = Url.createObjectUrl(new Blob(List<dynamic>.from([recordedChunks]), "video/mp4"));
       document.body.append(a);
       a.style.display = "none";
       a.href = url;
