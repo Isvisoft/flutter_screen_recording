@@ -2,69 +2,49 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_screen_recording_platform_interface/flutter_screen_recording_platform_interface.dart';
 import 'dart:async';
 import 'dart:io';
-
-import 'package:foreground_service/foreground_service.dart';
+import 'package:flutter_foreground_plugin/flutter_foreground_plugin.dart';
 
 class FlutterScreenRecording {
-  static Future<bool> startRecordScreen(String name) async {
-    await _maybeStartFGS();
-    return FlutterScreenRecordingPlatform.instance.startRecordScreen(name);
+  static Future<bool> startRecordScreen(String name, {String titleNotification, String messageNotification}) async{
+    await _maybeStartFGS(titleNotification, messageNotification);
+    final bool start = await FlutterScreenRecordingPlatform.instance.startRecordScreen(name);
+    return start;
   }
 
-  static Future<bool> startRecordScreenAndAudio(String name) {
-    return FlutterScreenRecordingPlatform.instance
-        .startRecordScreenAndAudio(name);
+  static Future<bool> startRecordScreenAndAudio(String name, {String titleNotification, String messageNotification}) async {
+    await _maybeStartFGS(titleNotification, messageNotification);
+    final bool start = await FlutterScreenRecordingPlatform.instance.startRecordScreenAndAudio(name);
+    return start;
   }
 
   static Future<String> get stopRecordScreen async {
     final String path = await FlutterScreenRecordingPlatform.instance.stopRecordScreen;
     if (!kIsWeb && Platform.isAndroid) {
-      await ForegroundService.stopForegroundService();
+      await FlutterForegroundPlugin.stopForegroundService();
     }
     return path;
   }
 
-  static void _maybeStartFGS() async {
+  static  _maybeStartFGS(String titleNotification, String messageNotification) async {
     if (!kIsWeb && Platform.isAndroid) {
-      ///if the app was killed+relaunched, this function will be executed again
-      ///but if the foreground service stayed alive,
-      ///this does not need to be re-done
-      if (!(await ForegroundService.foregroundServiceIsStarted())) {
-        await ForegroundService.setServiceIntervalSeconds(5);
-
-        //necessity of editMode is dubious (see function comments)
-        await ForegroundService.notification.startEditMode();
-
-        await ForegroundService.notification
-            .setTitle("Example Title: ${DateTime.now()}");
-        await ForegroundService.notification
-            .setText("Example Text: ${DateTime.now()}");
-
-        await ForegroundService.notification.finishEditMode();
-
-        await ForegroundService.startForegroundService(
-            _foregroundServiceFunction);
-        await ForegroundService.getWakeLock();
-      }
-
-      ///this exists solely in the main app/isolate,
-      ///so needs to be redone after every app kill+relaunch
-      await ForegroundService.setupIsolateCommunication((data) {
-        print("main received: $data");
-      });
+      await FlutterForegroundPlugin.setServiceMethodInterval(seconds: 5);
+      await FlutterForegroundPlugin.setServiceMethod(globalForegroundService);
+      return await FlutterForegroundPlugin.startForegroundService(
+        holdWakeLock: false,
+        onStarted: () async {
+          print("Foreground on Started");
+        },
+        onStopped: () {
+          print("Foreground on Stopped");
+        },
+        title: titleNotification,
+        content: messageNotification,
+        iconName: "org_thebus_foregroundserviceplugin_notificationicon",
+      );
     }
   }
 
-  static void _foregroundServiceFunction() {
-    print("The current time is: ${DateTime.now()}");
-    //ForegroundService.notification.setText("The time was: ${DateTime.now()}");
-
-    if (!ForegroundService.isIsolateCommunicationSetup) {
-      ForegroundService.setupIsolateCommunication((data) {
-        print("bg isolate received: $data");
-      });
-    }
-
-    ForegroundService.sendToPort("message from bg isolate");
+  static void globalForegroundService() {
+    print("current datetime is ${DateTime.now()}");
   }
 }
