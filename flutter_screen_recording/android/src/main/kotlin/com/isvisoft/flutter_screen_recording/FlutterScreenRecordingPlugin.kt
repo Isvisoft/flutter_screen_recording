@@ -22,7 +22,6 @@ import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.io.File
 import java.io.IOException
-import io.flutter.plugins
 
 class FlutterScreenRecordingPlugin(
         private val registrar: Registrar
