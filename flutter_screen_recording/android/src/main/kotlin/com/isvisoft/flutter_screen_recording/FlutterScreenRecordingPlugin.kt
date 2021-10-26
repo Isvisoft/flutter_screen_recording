@@ -26,7 +26,7 @@ import io.flutter.plugins
 
 class FlutterScreenRecordingPlugin(
         private val registrar: Registrar
-) : MethodCallHandler, PluginRegistry.ActivityResultListener, FlutterPlugin{
+) : MethodCallHandler, PluginRegistry.ActivityResultListener{
 
     var mScreenDensity: Int = 0
     var mMediaRecorder: MediaRecorder? = null
