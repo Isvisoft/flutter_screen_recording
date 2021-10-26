@@ -10,12 +10,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  foreground_service: ^1.3.0
   flutter_screen_recording_platform_interface:
+#    path: ../flutter_screen_recording_platform_interface/
     git:
       url: https://github.com/vvalladolidIV/flutter_screen_recording.git
       path: flutter_screen_recording_platform_interface
       ref: web-v
   flutter_screen_recording_web:
+#    path: ../flutter_screen_recording_web/
+
     git:
       url: https://github.com/vvalladolidIV/flutter_screen_recording.git
       path: flutter_screen_recording_web
@@ -24,7 +28,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  plugin_platform_interface: ^1.0.2
+  plugin_platform_interface: ^2.0.2
 
 flutter:
   plugin:

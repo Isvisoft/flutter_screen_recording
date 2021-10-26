@@ -22,12 +22,11 @@ import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.io.File
 import java.io.IOException
-
+import io.flutter.plugins
 
 class FlutterScreenRecordingPlugin(
         private val registrar: Registrar
-) : MethodCallHandler,
-        PluginRegistry.ActivityResultListener {
+) : MethodCallHandler, PluginRegistry.ActivityResultListener, FlutterPlugin{
 
     var mScreenDensity: Int = 0
     var mMediaRecorder: MediaRecorder? = null
