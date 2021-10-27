@@ -132,9 +132,9 @@ let screenSize = UIScreen.main.bounds
                     }
 
                     if self.videoWriter?.status == AVAssetWriter.Status.writing {
-                        if (self.videoWriterInput?.isReadyForMoreMediaData == true) {
+                        if (self.videoInput?.isReadyForMoreMediaData == true) {
                             print("Writting a sample");
-                            if  self.videoWriterInput?.append(cmSampleBuffer) == false {
+                            if  self.videoInput?.append(cmSampleBuffer) == false {
                                 print(" we have a problem writing video")
                                 self.myResult!(false)
                             }
@@ -168,7 +168,9 @@ let screenSize = UIScreen.main.bounds
           //  Fallback on earlier versions
         }
 
-        self.videoWriterInput?.markAsFinished();
+        self.videoInput?.markAsFinished();
+        self.audioInput?.markAsFinished();
+        
         self.videoWriter?.finishWriting {
             print("finished writing video");
 

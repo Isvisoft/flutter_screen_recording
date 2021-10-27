@@ -7,7 +7,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.6.1"
+    version: "2.8.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -28,7 +28,7 @@ packages:
       name: charcode
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "1.3.1"
   clock:
     dependency: transitive
     description:
@@ -55,13 +55,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_foreground_plugin:
+    dependency: transitive
+    description:
+      name: flutter_foreground_plugin
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.1"
   flutter_screen_recording:
     dependency: "direct dev"
     description:
       name: flutter_screen_recording
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.10"
+    version: "1.1.1"
   flutter_screen_recording_platform_interface:
     dependency: "direct main"
     description:
@@ -99,7 +106,7 @@ packages:
       name: meta
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.3.0"
+    version: "1.7.0"
   path:
     dependency: transitive
     description:
@@ -120,7 +127,7 @@ packages:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.2"
+    version: "2.0.2"
   pub_semver:
     dependency: transitive
     description:
@@ -174,7 +181,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.0"
+    version: "0.4.2"
   typed_data:
     dependency: transitive
     description:
