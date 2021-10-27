@@ -1,45 +1,18 @@
-# flutter_screen_recording
+# flutter_screen_recording_platform_interface
 
-A new Flutter plugin for record the screen. This plug-in requires Android SDK 21+ and iOS 10+
+A common platform interface for the [`flutter_screen_recording`][1] plugin.
 
-## Getting Started
+This interface allows platform-specific implementations of the `flutter_screen_recording`
+plugin, as well as the plugin itself, to ensure they are supporting the
+same interface.
 
-This plugin can be used for record the screen on Android and iOS devices.
+# Usage
 
-1. For start the recording
+To implement a new platform-specific implementation of `flutter_screen_recording`, extend
+[`FlutterScreenRecordingPlatform`][2] with an implementation that performs the
+platform-specific behavior, and when you register your plugin, set the default
+`FlutterScreenRecordingPlatform` by calling
+`FlutterScreenRecordingPlatform.instance = MyPlatformFlutterScreenRecording()`.
 
-```dart
-bool started = FlutterScreenRecording.startRecordScreen(videoName);
-```
-
-Or
-
-```dart
-bool started = FlutterScreenRecording.startRecordScreenAndAudio(videoName);
-```
-
-2. For stop the recording
-
-```dart
-String path = FlutterScreenRecording.stopRecordScreen;
-```
-
-## Android
-
-Flutter_Screen_Recorder do not request permissions necessary. You can use [Permission_handler](https://pub.dev/packages/permission_handler), a permissions plugin for Flutter.
-Require and add the following permissions in your manifest:
-
-```java
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.RECORD_AUDIO" />
-```
-
-## iOS
-
-You only need add the permission message on the Info.plist
-
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Save video in gallery</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Save audio in video</string>
+[1]: ../flutter_screen_recording
+[2]: lib/flutter_screen_recording_platform_interface.dart

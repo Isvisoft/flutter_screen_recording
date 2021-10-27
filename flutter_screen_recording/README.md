@@ -44,3 +44,8 @@ You only need add the permission message on the Info.plist
 	<string>Save video in gallery</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Save audio in video</string>
+	
+## Web
+This plugin compiles for the web platform since version 2.0.0.
+
+

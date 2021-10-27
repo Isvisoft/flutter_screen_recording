@@ -1,3 +1,7 @@
+## 2.0.0
+* Federated Plugin
+* Web support
+
 ## 1.0.10
 * Update docs
 
