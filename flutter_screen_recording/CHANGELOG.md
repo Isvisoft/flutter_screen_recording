@@ -1,3 +1,7 @@
+## 2.0.1
+* Change dependencies
+
+
 ## 2.0.0
 * Federated Plugin
 * Web support
