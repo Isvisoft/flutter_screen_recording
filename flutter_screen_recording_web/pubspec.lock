@@ -55,27 +55,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_foreground_plugin:
-    dependency: transitive
-    description:
-      name: flutter_foreground_plugin
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.1"
-  flutter_screen_recording:
-    dependency: "direct dev"
-    description:
-      name: flutter_screen_recording
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.1"
   flutter_screen_recording_platform_interface:
     dependency: "direct main"
     description:
-      path: "../flutter_screen_recording_platform_interface"
-      relative: true
-    source: path
-    version: "1.0.10"
+      name: flutter_screen_recording_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -127,7 +113,7 @@ packages:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
+    version: "1.0.3"
   pub_semver:
     dependency: transitive
     description:
@@ -198,4 +184,4 @@ packages:
     version: "2.1.0"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=1.17.0"
+  flutter: ">=1.20.0"
