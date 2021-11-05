@@ -1,3 +1,6 @@
+## 2.0.3
+* ios Bug
+
 ## 2.0.2
 * Change devDependencies
 
