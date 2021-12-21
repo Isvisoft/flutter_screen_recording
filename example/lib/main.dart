@@ -13,6 +13,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool recording = false;
+  bool paused = false;
   int _time = 0;
 
   requestPermissions() async {
@@ -78,11 +79,37 @@ class _MyAppState extends State<MyApp> {
                       child: Text("Stop Record"),
                       onPressed: () => stopScreenRecord(),
                     ),
-                  )
+                  ),
+            if (recording && !paused)
+              Center(
+                child: RaisedButton(
+                  child: Text("Pause"),
+                  onPressed: pauseRecord,
+                ),
+              ),
+            if (recording && paused)
+              Center(
+                child: RaisedButton(
+                  child: Text("Resume"),
+                  onPressed: resumeRecordScreen,
+                ),
+              )
           ],
         ),
       ),
     );
+  }
+
+  pauseRecord() {
+    setState(() {
+      paused = FlutterScreenRecording.pauseRecordScreen();
+    });
+  }
+
+  resumeRecordScreen() {
+    setState(() {
+      paused = !FlutterScreenRecording.resumeRecordScreen();
+    });
   }
 
   startScreenRecord(bool audio) async {

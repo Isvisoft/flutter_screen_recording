@@ -69,27 +69,38 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_foreground_plugin:
+    dependency: transitive
+    description:
+      name: flutter_foreground_plugin
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.1"
   flutter_screen_recording:
     dependency: "direct main"
     description:
       path: "../flutter_screen_recording"
       relative: true
     source: path
-    version: "1.0.10"
+    version: "2.0.3"
   flutter_screen_recording_platform_interface:
     dependency: transitive
     description:
-      path: "../flutter_screen_recording_platform_interface"
-      relative: true
-    source: path
-    version: "1.0.10"
+      path: flutter_screen_recording_platform_interface
+      ref: "flutter_screen_recording_platform_interface_0.0.1"
+      resolved-ref: "8e1739674aee14f331d1b3134a82719705320411"
+      url: "git@github.com:manabie-com/flutter_screen_recording.git"
+    source: git
+    version: "1.0.0"
   flutter_screen_recording_web:
     dependency: transitive
     description:
-      path: "../flutter_screen_recording_web"
-      relative: true
-    source: path
-    version: "1.0.10"
+      path: flutter_screen_recording_web
+      ref: "flutter_screen_recording_web_0.0.1"
+      resolved-ref: f73ba0e5854268241922372259ada34b52515546
+      url: "git@github.com:manabie-com/flutter_screen_recording.git"
+    source: git
+    version: "1.0.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -141,14 +152,7 @@ packages:
       name: permission_handler
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.4.0+hotfix.4"
-  permission_handler_platform_interface:
-    dependency: transitive
-    description:
-      name: permission_handler_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
+    version: "4.3.0"
   platform_detect:
     dependency: transitive
     description:
@@ -162,7 +166,7 @@ packages:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.3"
+    version: "2.0.2"
   pub_semver:
     dependency: transitive
     description:
@@ -240,4 +244,4 @@ packages:
     version: "2.1.0"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=1.17.0"
+  flutter: ">=1.20.0"
