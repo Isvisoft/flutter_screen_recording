@@ -1,6 +1,7 @@
 library flutter_screen_recording_web;
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:html';
 import 'dart:js';
 
@@ -33,12 +34,13 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   Future<bool> _record(String name, bool recordVideo, bool recordAudio) async {
     try {
       var audioStream;
-      if(recordAudio){
+      if (recordAudio) {
         audioStream = await navigator.getUserMedia({"audio": true});
       }
-      stream = await navigator.getDisplayMedia({"audio": recordAudio, "video": recordVideo});
+      stream = await navigator
+          .getDisplayMedia({"audio": recordAudio, "video": recordVideo});
       this.name = name;
-      if(recordAudio){
+      if (recordAudio) {
         stream.addTrack(audioStream.getAudioTracks()[0]);
       }
 
@@ -106,5 +108,35 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
     });
     mediaRecorder.stop();
     return c.future;
+  }
+
+  @override
+  bool pauseRecordScreen() {
+    try {
+      mediaRecorder.pause();
+      return true;
+    } catch (error, stackTrace) {
+      log(
+        "Error: Cannot pause screen record",
+        error: error,
+        stackTrace: stackTrace,
+      );
+      return false;
+    }
+  }
+
+  @override
+  bool resumeRecordScreen() {
+    try {
+      mediaRecorder.resume();
+      return true;
+    } catch (error, stackTrace) {
+      log(
+        "Error: Cannot resume screen record",
+        error: error,
+        stackTrace: stackTrace,
+      );
+      return false;
+    }
   }
 }
