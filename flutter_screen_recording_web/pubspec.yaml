@@ -10,7 +10,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_screen_recording_platform_interface: ^1.0.0
+  flutter_screen_recording_platform_interface:
+    git:
+      url: git@github.com:manabie-com/flutter_screen_recording.git
+      path: flutter_screen_recording_platform_interface
+      ref: flutter_screen_recording_platform_interface_0.0.1
+
   flutter_web_plugins:
     sdk: flutter
   js: ^0.6.2
