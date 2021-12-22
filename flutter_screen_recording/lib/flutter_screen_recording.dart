@@ -13,11 +13,20 @@ class FlutterScreenRecording {
     return start;
   }
 
-  static Future<bool> startRecordScreenAndAudio(String name,
-      {String titleNotification, String messageNotification}) async {
+  static Future<bool> startRecordScreenAndAudio(
+    String name, {
+    String titleNotification,
+    String messageNotification,
+    bool recordSystemAudio = true,
+    bool disableUserAudio = false,
+  }) async {
     await _maybeStartFGS(titleNotification, messageNotification);
-    final bool start = await FlutterScreenRecordingPlatform.instance
-        .startRecordScreenAndAudio(name);
+    final bool start =
+        await FlutterScreenRecordingPlatform.instance.startRecordScreenAndAudio(
+      name,
+      recordSystemAudio: recordSystemAudio,
+      disableUserAudio: disableUserAudio,
+    );
     return start;
   }
 

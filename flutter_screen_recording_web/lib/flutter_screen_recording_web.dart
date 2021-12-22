@@ -29,18 +29,34 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   }
 
   @override
-  Future<bool> startRecordScreenAndAudio(String name) async {
-    return _record(name, true, true);
+  Future<bool> startRecordScreenAndAudio(
+    String name, {
+    bool recordSystemAudio = true,
+    bool disableUserAudio = false,
+  }) async {
+    return _record(
+      name,
+      true,
+      true,
+      recordSystemAudio: recordSystemAudio,
+      disableUserAudio: disableUserAudio,
+    );
   }
 
-  Future<bool> _record(String name, bool recordVideo, bool recordAudio) async {
+  Future<bool> _record(
+    String name,
+    bool recordVideo,
+    bool recordAudio, {
+    bool recordSystemAudio = false,
+    bool disableUserAudio = false,
+  }) async {
     try {
       var userMediaStream;
       if (recordAudio) {
         userMediaStream = await navigator.getUserMedia({"audio": true});
       }
       var displayMediaStream = await navigator
-          .getDisplayMedia({"audio": recordAudio, "video": recordVideo});
+          .getDisplayMedia({"audio": recordSystemAudio, "video": recordVideo});
 
       stream = MediaStream([displayMediaStream.getVideoTracks()[0]]);
 
@@ -51,9 +67,8 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
         var _audioDestinationNode =
             _audioContext.createMediaStreamDestination();
 
-        if (displayMediaStream.getAudioTracks().length > 0) {
-          print(
-              "xxx_init_displayMediaStream.getAudioTracks().length_${displayMediaStream.getAudioTracks().length}");
+        if (recordSystemAudio &&
+            displayMediaStream.getAudioTracks().length > 0) {
           final displayAudioStreamSource =
               _audioContext.createMediaStreamSource(
                   MediaStream([displayMediaStream.getAudioTracks()[0]]));
@@ -64,6 +79,9 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
           final userAudioStreamSource =
               _audioContext.createMediaStreamSource(userMediaStream);
           userAudioStreamSource.connectNode(_audioDestinationNode);
+          if (disableUserAudio) {
+            userMediaStream.getAudioTracks()[0].enabled = false;
+          }
         }
 
         if (_audioDestinationNode.stream.getAudioTracks().length > 0) {
@@ -105,8 +123,14 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
         print("blob size: ${recordedChunks?.size ?? 'empty'}");
       });
 
-      _onStopCompleter?.complete("");
       _onStopCompleter = new Completer<String>();
+
+      displayMediaStream.addEventListener("inactive", (event) async {
+        if (mediaRecorder != null && mediaRecorder.state != "inactive") {
+          final result = await stopRecordScreen;
+        }
+      });
+
       this.mediaRecorder.addEventListener("stop", _onStop);
 
       this.mediaRecorder.start();
@@ -122,11 +146,12 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   @override
   Future<String> get stopRecordScreen {
     mediaRecorder.stop();
-    return _onStopCompleter.future;
+    return _onStopCompleter?.future;
   }
 
   void _onStop(Event event) {
     try {
+      print("xxx_onstop");
       mediaRecorder = null;
       this.stream.getTracks().forEach((element) => element.stop());
       this.stream = null;
@@ -139,9 +164,10 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       a.download = this.name;
       a.click();
       Url.revokeObjectUrl(url);
-      _onStopCompleter.complete(this.name);
+      _onStopCompleter?.complete(this.name);
     } catch (ex, s) {
       print("Error _onStop\n$ex\n$s");
+      _onStopCompleter?.completeError(ex, s);
     }
   }
 
