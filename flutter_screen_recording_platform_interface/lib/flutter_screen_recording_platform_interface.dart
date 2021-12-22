@@ -27,7 +27,10 @@ abstract class FlutterScreenRecordingPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<bool> startRecordScreen(String name) {
+  Future<bool> startRecordScreen(
+    String name, {
+    Function(String) onStop,
+  }) {
     throw UnimplementedError();
   }
 
@@ -35,6 +38,7 @@ abstract class FlutterScreenRecordingPlatform extends PlatformInterface {
     String name, {
     bool recordSystemAudio = true,
     bool disableUserAudio = false,
+    Function(String) onStop,
   }) {
     throw UnimplementedError();
   }

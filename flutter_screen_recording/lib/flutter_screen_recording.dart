@@ -5,11 +5,18 @@ import 'dart:io';
 import 'package:flutter_foreground_plugin/flutter_foreground_plugin.dart';
 
 class FlutterScreenRecording {
-  static Future<bool> startRecordScreen(String name,
-      {String titleNotification, String messageNotification}) async {
+  static Future<bool> startRecordScreen(
+    String name, {
+    String titleNotification,
+    String messageNotification,
+    Function(String) onStop,
+  }) async {
     await _maybeStartFGS(titleNotification, messageNotification);
     final bool start =
-        await FlutterScreenRecordingPlatform.instance.startRecordScreen(name);
+        await FlutterScreenRecordingPlatform.instance.startRecordScreen(
+      name,
+      onStop: onStop,
+    );
     return start;
   }
 
@@ -19,13 +26,15 @@ class FlutterScreenRecording {
     String messageNotification,
     bool recordSystemAudio = true,
     bool disableUserAudio = false,
+    Function(String) onStop,
   }) async {
     await _maybeStartFGS(titleNotification, messageNotification);
     final bool start =
         await FlutterScreenRecordingPlatform.instance.startRecordScreenAndAudio(
-      name,
+          name,
       recordSystemAudio: recordSystemAudio,
       disableUserAudio: disableUserAudio,
+      onStop: onStop,
     );
     return start;
   }
