@@ -116,9 +116,13 @@ class _MyAppState extends State<MyApp> {
     bool start = false;
 
     if (audio) {
-      start = await FlutterScreenRecording.startRecordScreenAndAudio("Title");
+      start = await FlutterScreenRecording.startRecordScreenAndAudio(
+        "Title",
+        onStop: _onStop,
+      );
     } else {
-      start = await FlutterScreenRecording.startRecordScreen("Title");
+      start = await FlutterScreenRecording.startRecordScreen("Title",
+          onStop: _onStop);
     }
 
     if (start) {
@@ -128,11 +132,15 @@ class _MyAppState extends State<MyApp> {
     return start;
   }
 
+  _onStop(result) {
+    setState(() {
+      recording = false;
+      paused = false;
+    });
+  }
+
   stopScreenRecord() async {
     String path = await FlutterScreenRecording.stopRecordScreen;
-    setState(() {
-      recording = !recording;
-    });
     print("Opening video");
     print(path);
     OpenFile.open(path);

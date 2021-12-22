@@ -43,6 +43,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
+  convert:
+    dependency: transitive
+    description:
+      name: convert
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.1"
+  crypto:
+    dependency: transitive
+    description:
+      name: crypto
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.5"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -86,20 +100,16 @@ packages:
   flutter_screen_recording_platform_interface:
     dependency: transitive
     description:
-      path: flutter_screen_recording_platform_interface
-      ref: "flutter_screen_recording_platform_interface_0.0.2"
-      resolved-ref: "6f5f690094e4c6a6ccc219ca7af0ca4100e58bbe"
-      url: "git@github.com:manabie-com/flutter_screen_recording.git"
-    source: git
+      path: "../flutter_screen_recording_platform_interface"
+      relative: true
+    source: path
     version: "1.0.0"
   flutter_screen_recording_web:
     dependency: transitive
     description:
-      path: flutter_screen_recording_web
-      ref: "flutter_screen_recording_web_0.0.3"
-      resolved-ref: "4f228bd8fc023ae32194d585b61ea2dd709c441c"
-      url: "git@github.com:manabie-com/flutter_screen_recording.git"
-    source: git
+      path: "../flutter_screen_recording_web"
+      relative: true
+    source: path
     version: "1.0.1"
   flutter_test:
     dependency: "direct dev"
@@ -235,6 +245,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.0"
+  uuid:
+    dependency: transitive
+    description:
+      name: uuid
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.2"
   vector_math:
     dependency: transitive
     description:

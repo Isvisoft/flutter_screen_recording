@@ -1,6 +1,7 @@
 library flutter_screen_recording_platform_interface;
 
 import 'dart:async';
+import 'dart:html';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'method_channel_flutter_screen_recording.dart';
 
@@ -27,11 +28,19 @@ abstract class FlutterScreenRecordingPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<bool> startRecordScreen(String name) {
+  Future<bool> startRecordScreen(
+    String outputFileName, {
+    Function(String) onStop,
+  }) {
     throw UnimplementedError();
   }
 
-  Future<bool> startRecordScreenAndAudio(String name) {
+  Future<bool> startRecordScreenAndAudio(
+    String outputFileName, {
+    bool recordSystemAudio = true,
+    bool disableUserAudio = false,
+    Function(String) onStop,
+  }) {
     throw UnimplementedError();
   }
 
@@ -48,4 +57,13 @@ abstract class FlutterScreenRecordingPlatform extends PlatformInterface {
   }
 
   dynamic getRecorded() {}
+
+  //Return MediaStreamAudioSourceNode id
+  String addAudioTrack(MediaStream audioStream) {
+    throw UnimplementedError();
+  }
+
+  bool removeAudioTrack(String mediaStreamAudioSourceNodeId) {
+    throw UnimplementedError();
+  }
 }

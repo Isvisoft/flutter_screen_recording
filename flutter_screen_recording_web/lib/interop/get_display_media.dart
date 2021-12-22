@@ -27,7 +27,8 @@ class navigator {
       Map<String, dynamic> mediaConstraints) async {
     try {
       final mediaDevices = HTML.window.navigator.mediaDevices;
-      final JS.JsObject arg = JS.JsObject.jsify(mediaConstraints);
+      if (mediaDevices == null) throw Exception('MediaDevices is null');
+      final arg = JSUtils.jsify(mediaConstraints);
 
       final HTML.MediaStream jsStream =
           await JSUtils.promiseToFuture<HTML.MediaStream>(

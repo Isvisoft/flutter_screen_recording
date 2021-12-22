@@ -1,3 +1,5 @@
+import 'dart:html' hide Platform;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_screen_recording_platform_interface/flutter_screen_recording_platform_interface.dart';
 import 'dart:async';
@@ -5,19 +7,37 @@ import 'dart:io';
 import 'package:flutter_foreground_plugin/flutter_foreground_plugin.dart';
 
 class FlutterScreenRecording {
-  static Future<bool> startRecordScreen(String name,
-      {String titleNotification, String messageNotification}) async {
+  static Future<bool> startRecordScreen(
+    String outputFileName, {
+    String titleNotification,
+    String messageNotification,
+    Function(String) onStop,
+  }) async {
     await _maybeStartFGS(titleNotification, messageNotification);
     final bool start =
-        await FlutterScreenRecordingPlatform.instance.startRecordScreen(name);
+        await FlutterScreenRecordingPlatform.instance.startRecordScreen(
+      outputFileName,
+      onStop: onStop,
+    );
     return start;
   }
 
-  static Future<bool> startRecordScreenAndAudio(String name,
-      {String titleNotification, String messageNotification}) async {
+  static Future<bool> startRecordScreenAndAudio(
+    String outputFileName, {
+    String titleNotification,
+    String messageNotification,
+    bool recordSystemAudio = true,
+    bool disableUserAudio = false,
+    Function(String) onStop,
+  }) async {
     await _maybeStartFGS(titleNotification, messageNotification);
-    final bool start = await FlutterScreenRecordingPlatform.instance
-        .startRecordScreenAndAudio(name);
+    final bool start =
+        await FlutterScreenRecordingPlatform.instance.startRecordScreenAndAudio(
+      outputFileName,
+      recordSystemAudio: recordSystemAudio,
+      disableUserAudio: disableUserAudio,
+      onStop: onStop,
+    );
     return start;
   }
 
@@ -60,5 +80,15 @@ class FlutterScreenRecording {
   static bool resumeRecordScreen() =>
       FlutterScreenRecordingPlatform.instance.resumeRecordScreen();
 
-  static dynamic getRecorded() => FlutterScreenRecordingPlatform.instance.getRecorded();
+  static dynamic getRecorded() =>
+      FlutterScreenRecordingPlatform.instance.getRecorded();
+
+  static String addAudioTrack(MediaStream audioStream) {
+    return FlutterScreenRecordingPlatform.instance.addAudioTrack(audioStream);
+  }
+
+  static bool removeAudioTrack(String mediaStreamAudioSourceNodeId) {
+    return FlutterScreenRecordingPlatform.instance
+        .removeAudioTrack(mediaStreamAudioSourceNodeId);
+  }
 }
