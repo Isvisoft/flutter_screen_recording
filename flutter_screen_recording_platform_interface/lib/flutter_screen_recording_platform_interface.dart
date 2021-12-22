@@ -46,4 +46,6 @@ abstract class FlutterScreenRecordingPlatform extends PlatformInterface {
   bool resumeRecordScreen() {
     throw UnimplementedError();
   }
+
+  dynamic getRecorded() {}
 }
