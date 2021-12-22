@@ -116,8 +116,10 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
           stream.addTrack(_audioDestinationNode.stream.getAudioTracks()[0]);
         }
       }
-
-      if (MediaRecorder.isTypeSupported('video/mp4;codecs=h265')) {
+      if (MediaRecorder.isTypeSupported('video/mp4')) {
+        mimeType = 'video/mp4';
+        print("video/mp4");
+      } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h265')) {
         mimeType = 'video/mp4;codecs=h265,opus';
         print("video/mp4;codecs=h265");
       } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264')) {
