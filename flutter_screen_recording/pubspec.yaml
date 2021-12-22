@@ -12,16 +12,17 @@ dependencies:
     sdk: flutter
   flutter_foreground_plugin: ^0.4.0
   flutter_screen_recording_platform_interface:
-    git:
-      url: git@github.com:manabie-com/flutter_screen_recording.git
-      path: flutter_screen_recording_platform_interface
-      ref: flutter_screen_recording_platform_interface_0.0.2
-
+    path: ../flutter_screen_recording_platform_interface
+  #    git:
+  #      url: git@github.com:manabie-com/flutter_screen_recording.git
+  #      path: flutter_screen_recording_platform_interface
+  #      ref: flutter_screen_recording_platform_interface_0.0.1
   flutter_screen_recording_web:
-    git:
-      url: git@github.com:manabie-com/flutter_screen_recording.git
-      path: flutter_screen_recording_web
-      ref: flutter_screen_recording_web_0.0.3
+    path: ../flutter_screen_recording_web
+#    git:
+#      url: git@github.com:manabie-com/flutter_screen_recording.git
+#      path: flutter_screen_recording_web
+#      ref: flutter_screen_recording_web_0.0.1
 
 dev_dependencies:
   flutter_test:

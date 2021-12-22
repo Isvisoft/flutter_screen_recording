@@ -147,10 +147,8 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       this.mediaRecorder = new MediaRecorder(stream, {'mimeType': mimeType});
 
       this.mediaRecorder.addEventListener('dataavailable', (Event event) {
-        print("datavailable ${event.runtimeType}");
         recordedChunks = JsObject.fromBrowserObject(event)['data'];
         this.mimeType = mimeType;
-        print("blob size: ${recordedChunks?.size ?? 'empty'}");
       });
 
       _onStopCompleter = new Completer<String>();
@@ -166,7 +164,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       this.mediaRecorder.start();
       return true;
     } on Error catch (e, s) {
-      print("--->_record\n" + e.toString() + s.toString());
+      print("--->" + e.toString() + s.toString());
 
       return false;
     }
@@ -180,7 +178,6 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
 
   void _onStop(Event event) {
     try {
-      print("xxx_onstop");
       _audioSourceNodes = {};
       mediaRecorder = null;
       this.stream.getTracks().forEach((element) => element.stop());
@@ -200,7 +197,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       this.onStop?.call(this.name);
       this.onStop = null;
     } catch (ex, s) {
-      print("Error _onStop\n$ex\n$s");
+      print("Error _onStop record \n$ex\n$s");
       _onStopCompleter?.completeError(ex, s);
     }
   }
@@ -245,7 +242,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       _audioSourceNodes[id] = audioSourceNode;
       return id;
     } catch (er, s) {
-      print("Error: Flutter screen record - Cannot add audio track\n$er\n$s");
+      print("Error: Cannot add audio track\n$er\n$s");
     }
     return "";
   }
@@ -257,8 +254,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       audioSourceNode.disconnect(_audioDestinationNode);
       return true;
     } catch (er, s) {
-      print(
-          "Error: Flutter screen record - Cannot remove audio track\n$er\n$s");
+      print("Error: Cannot remove audio track\n$er\n$s");
       return false;
     }
   }
