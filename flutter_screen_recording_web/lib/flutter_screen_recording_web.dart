@@ -149,7 +149,6 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       this.mediaRecorder.addEventListener("stop", _onStop);
 
       this.mediaRecorder.start();
-
       return true;
     } on Error catch (e, s) {
       print("--->_record\n" + e.toString() + s.toString());
@@ -210,5 +209,10 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
           "Error: Cannot resumeRecordScreen\n${error.toString()}\n${stackTrace.toString()}");
       return false;
     }
+  }
+
+  @override
+  Blob getRecorded() {
+    return recordedChunks;
   }
 }

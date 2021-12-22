@@ -59,8 +59,8 @@ packages:
     dependency: "direct main"
     description:
       path: flutter_screen_recording_platform_interface
-      ref: "flutter_screen_recording_platform_interface_0.0.1"
-      resolved-ref: "8e1739674aee14f331d1b3134a82719705320411"
+      ref: "flutter_screen_recording_platform_interface_0.0.3"
+      resolved-ref: "4f228bd8fc023ae32194d585b61ea2dd709c441c"
       url: "git@github.com:manabie-com/flutter_screen_recording.git"
     source: git
     version: "1.0.0"
