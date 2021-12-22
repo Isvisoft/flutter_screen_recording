@@ -14,7 +14,7 @@ dependencies:
     git:
       url: git@github.com:manabie-com/flutter_screen_recording.git
       path: flutter_screen_recording_platform_interface
-      ref: flutter_screen_recording_platform_interface_0.0.1
+      ref: flutter_screen_recording_platform_interface_0.0.3
 
   flutter_web_plugins:
     sdk: flutter

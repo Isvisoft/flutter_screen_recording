@@ -78,6 +78,8 @@ class FlutterScreenRecording {
   static bool resumeRecordScreen() =>
       FlutterScreenRecordingPlatform.instance.resumeRecordScreen();
 
+  static dynamic getRecorded() => FlutterScreenRecordingPlatform.instance.getRecorded();
+
   static String addAudioTrack(MediaStream audioStream) {
     return FlutterScreenRecordingPlatform.instance.addAudioTrack(audioStream);
   }

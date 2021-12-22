@@ -56,6 +56,8 @@ abstract class FlutterScreenRecordingPlatform extends PlatformInterface {
     throw UnimplementedError();
   }
 
+  dynamic getRecorded() {}
+
   //Return MediaStreamAudioSourceNode id
   String addAudioTrack(MediaStream audioStream) {
     throw UnimplementedError();
