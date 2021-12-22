@@ -79,7 +79,6 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       });
 
       this.mediaRecorder.start();
-
       return true;
     } on Error catch (e) {
       print("--->" + e.toString());
@@ -138,5 +137,10 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       );
       return false;
     }
+  }
+
+  @override
+  Blob getRecorded() {
+    return recordedChunks;
   }
 }
