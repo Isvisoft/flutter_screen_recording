@@ -20,7 +20,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   Blob recordedChunks;
   String mimeType;
   Completer<String> _onStopCompleter;
-  Function(String result) onStop;
+  Function(String result) _onStopCallback;
 
   AudioContext _audioContext;
   MediaStreamAudioDestinationNode _audioDestinationNode;
@@ -36,11 +36,11 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
 
   @override
   Future<bool> startRecordScreen(
-    String name, {
+    String outputFileName, {
     Function(String) onStop,
   }) async {
-    return _record(
-      name,
+    return _startRecordScreen(
+      outputFileName,
       true,
       false,
       onStop: onStop,
@@ -49,13 +49,13 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
 
   @override
   Future<bool> startRecordScreenAndAudio(
-    String name, {
+    String outputFileName, {
     bool recordSystemAudio = true,
     bool disableUserAudio = false,
     Function(String) onStop,
   }) async {
-    return _record(
-      name,
+    return _startRecordScreen(
+      outputFileName,
       true,
       true,
       recordSystemAudio: recordSystemAudio,
@@ -64,7 +64,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
     );
   }
 
-  Future<bool> _record(
+  Future<bool> _startRecordScreen(
     String name,
     bool recordVideo,
     bool recordAudio, {
@@ -73,7 +73,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
     Function(String) onStop,
   }) async {
     try {
-      this.onStop = onStop;
+      this._onStopCallback = onStop;
       var userMediaStream;
       if (recordAudio) {
         userMediaStream = await navigator.getUserMedia({"audio": true});
@@ -118,27 +118,19 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       }
       if (MediaRecorder.isTypeSupported('video/mp4')) {
         mimeType = 'video/mp4';
-        print("video/mp4");
       } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h265')) {
         mimeType = 'video/mp4;codecs=h265,opus';
-        print("video/mp4;codecs=h265");
       } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264')) {
-        print("video/mp4;codecs=h264");
         mimeType = 'video/mp4;codecs=h264,opus';
       } else if (MediaRecorder.isTypeSupported('video/webm;codecs=h265')) {
-        print("video/webm;codecs=h265");
         mimeType = 'video/webm;codecs=h265,opus';
       } else if (MediaRecorder.isTypeSupported('video/webm;codecs=h264')) {
-        print("video/webm;codecs=h264");
         mimeType = 'video/webm;codecs=h264,opus';
       } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
-        print('video/webm;codecs=vp9');
         mimeType = 'video/webm;codecs=vp9,opus';
       } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8.0')) {
-        print('video/webm;codecs=vp8.0');
         mimeType = 'video/webm;codecs=vp8.0,opus';
       } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
-        print('video/webm;codecs=vp8');
         mimeType = 'video/webm;codecs=vp8,opus';
       } else {
         mimeType = 'video/webm';
@@ -163,8 +155,8 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
 
       this.mediaRecorder.start();
       return true;
-    } on Error catch (e, s) {
-      print("--->" + e.toString() + s.toString());
+    } on Error catch (error, stackTrace) {
+      print("--->" + error.toString() + stackTrace.toString());
 
       return false;
     }
@@ -184,21 +176,21 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       this.stream = null;
       _audioContext = null;
       _audioDestinationNode = null;
-      final a = document.createElement("a") as AnchorElement;
+      final downloadVideoElement = document.createElement("a") as AnchorElement;
       final url = Url.createObjectUrl(
           new Blob(List<dynamic>.from([recordedChunks]), mimeType));
-      document.body.append(a);
-      a.style.display = "none";
-      a.href = url;
-      a.download = this.name;
-      a.click();
+      document.body.append(downloadVideoElement);
+      downloadVideoElement.style.display = "none";
+      downloadVideoElement.href = url;
+      downloadVideoElement.download = this.name;
+      downloadVideoElement.click();
       Url.revokeObjectUrl(url);
       _onStopCompleter?.complete(this.name);
-      this.onStop?.call(this.name);
-      this.onStop = null;
-    } catch (ex, s) {
-      print("Error _onStop record \n$ex\n$s");
-      _onStopCompleter?.completeError(ex, s);
+      this._onStopCallback?.call(this.name);
+      this._onStopCallback = null;
+    } catch (error, stackTrace) {
+      print("Error _onStop record \n$error\n$stackTrace");
+      _onStopCompleter?.completeError(error, stackTrace);
     }
   }
 
@@ -241,8 +233,8 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       final id = Uuid().v4();
       _audioSourceNodes[id] = audioSourceNode;
       return id;
-    } catch (er, s) {
-      print("Error: Cannot add audio track\n$er\n$s");
+    } catch (error, stackTrace) {
+      print("Error: Cannot add audio track\n$error\n$stackTrace");
     }
     return "";
   }
@@ -253,8 +245,8 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       final audioSourceNode = _audioSourceNodes[mediaStreamAudioSourceNodeId];
       audioSourceNode.disconnect(_audioDestinationNode);
       return true;
-    } catch (er, s) {
-      print("Error: Cannot remove audio track\n$er\n$s");
+    } catch (error, stackTrace) {
+      print("Error: Cannot remove audio track\n$error\n$stackTrace");
       return false;
     }
   }
