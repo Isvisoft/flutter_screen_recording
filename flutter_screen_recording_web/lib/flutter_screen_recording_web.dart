@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:html';
 import 'dart:js';
+import 'dart:web_audio';
 
 import 'interop/get_display_media.dart';
 
@@ -16,6 +17,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   MediaRecorder mediaRecorder;
   Blob recordedChunks;
   String mimeType;
+  Completer<String> _onStopCompleter;
 
   static registerWith(Registrar registrar) {
     FlutterScreenRecordingPlatform.instance = WebFlutterScreenRecording();
@@ -33,18 +35,40 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
 
   Future<bool> _record(String name, bool recordVideo, bool recordAudio) async {
     try {
-      var audioStream;
+      var userMediaStream;
       if (recordAudio) {
-        audioStream = await navigator.getUserMedia({"audio": true});
+        userMediaStream = await navigator.getUserMedia({"audio": true});
       }
       var displayMediaStream = await navigator
           .getDisplayMedia({"audio": recordAudio, "video": recordVideo});
 
-      stream = MediaStream(displayMediaStream);
+      stream = MediaStream([displayMediaStream.getVideoTracks()[0]]);
 
       this.name = name;
+
       if (recordAudio) {
-        stream.addTrack(audioStream.getAudioTracks()[0]);
+        var _audioContext = AudioContext();
+        var _audioDestinationNode =
+            _audioContext.createMediaStreamDestination();
+
+        if (displayMediaStream.getAudioTracks().length > 0) {
+          print(
+              "xxx_init_displayMediaStream.getAudioTracks().length_${displayMediaStream.getAudioTracks().length}");
+          final displayAudioStreamSource =
+              _audioContext.createMediaStreamSource(
+                  MediaStream([displayMediaStream.getAudioTracks()[0]]));
+          displayAudioStreamSource.connectNode(_audioDestinationNode);
+        }
+
+        if (userMediaStream.getAudioTracks().length > 0) {
+          final userAudioStreamSource =
+              _audioContext.createMediaStreamSource(userMediaStream);
+          userAudioStreamSource.connectNode(_audioDestinationNode);
+        }
+
+        if (_audioDestinationNode.stream.getAudioTracks().length > 0) {
+          stream.addTrack(_audioDestinationNode.stream.getAudioTracks()[0]);
+        }
       }
 
       if (MediaRecorder.isTypeSupported('video/mp4;codecs=h265')) {
@@ -81,19 +105,28 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
         print("blob size: ${recordedChunks?.size ?? 'empty'}");
       });
 
+      _onStopCompleter?.complete("");
+      _onStopCompleter = new Completer<String>();
+      this.mediaRecorder.addEventListener("stop", _onStop);
+
       this.mediaRecorder.start();
 
       return true;
-    } on Error catch (e) {
-      print("--->" + e.toString());
+    } on Error catch (e, s) {
+      print("--->_record\n" + e.toString() + s.toString());
+
       return false;
     }
   }
 
   @override
   Future<String> get stopRecordScreen {
-    final c = new Completer<String>();
-    this.mediaRecorder.addEventListener("stop", (event) {
+    mediaRecorder.stop();
+    return _onStopCompleter.future;
+  }
+
+  void _onStop(Event event) {
+    try {
       mediaRecorder = null;
       this.stream.getTracks().forEach((element) => element.stop());
       this.stream = null;
@@ -106,11 +139,10 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       a.download = this.name;
       a.click();
       Url.revokeObjectUrl(url);
-
-      c.complete(this.name);
-    });
-    mediaRecorder.stop();
-    return c.future;
+      _onStopCompleter.complete(this.name);
+    } catch (ex, s) {
+      print("Error _onStop\n$ex\n$s");
+    }
   }
 
   @override
@@ -119,11 +151,8 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       mediaRecorder.pause();
       return true;
     } catch (error, stackTrace) {
-      log(
-        "Error: Cannot pause screen record",
-        error: error,
-        stackTrace: stackTrace,
-      );
+      print(
+          "Error: Cannot pauseRecordScreen\n${error.toString()}\n${stackTrace.toString()}");
       return false;
     }
   }
@@ -134,11 +163,8 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       mediaRecorder.resume();
       return true;
     } catch (error, stackTrace) {
-      log(
-        "Error: Cannot resume screen record",
-        error: error,
-        stackTrace: stackTrace,
-      );
+      print(
+          "Error: Cannot resumeRecordScreen\n${error.toString()}\n${stackTrace.toString()}");
       return false;
     }
   }
