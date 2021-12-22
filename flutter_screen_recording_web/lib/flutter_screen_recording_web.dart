@@ -6,6 +6,8 @@ import 'dart:html';
 import 'dart:js';
 import 'dart:web_audio';
 
+import 'package:uuid/uuid.dart';
+
 import 'interop/get_display_media.dart';
 
 import 'package:flutter_screen_recording_platform_interface/flutter_screen_recording_platform_interface.dart';
@@ -19,6 +21,12 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   String mimeType;
   Completer<String> _onStopCompleter;
   Function(String result) onStop;
+
+  AudioContext _audioContext;
+  MediaStreamAudioDestinationNode _audioDestinationNode;
+
+  //id, source
+  Map<String, MediaStreamAudioSourceNode> _audioSourceNodes;
 
   WebFlutterScreenRecording();
 
@@ -70,29 +78,34 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       if (recordAudio) {
         userMediaStream = await navigator.getUserMedia({"audio": true});
       }
-      var displayMediaStream = await navigator
-          .getDisplayMedia({"audio": recordSystemAudio, "video": recordVideo});
+      var displayMediaStream = await navigator.getDisplayMedia({
+        "audio": recordSystemAudio,
+        "video": {
+          'width': {'ideal': 1920},
+          'height': {'ideal': 1080},
+        }
+      });
 
       stream = MediaStream([displayMediaStream.getVideoTracks()[0]]);
 
       this.name = name;
 
       if (recordAudio) {
-        var _audioContext = AudioContext();
-        var _audioDestinationNode =
-        _audioContext.createMediaStreamDestination();
+        _audioContext = AudioContext();
+        _audioDestinationNode = _audioContext.createMediaStreamDestination();
+        _audioSourceNodes = {};
 
         if (recordSystemAudio &&
             displayMediaStream.getAudioTracks().length > 0) {
           final displayAudioStreamSource =
-          _audioContext.createMediaStreamSource(
-              MediaStream([displayMediaStream.getAudioTracks()[0]]));
+              _audioContext.createMediaStreamSource(
+                  MediaStream([displayMediaStream.getAudioTracks()[0]]));
           displayAudioStreamSource.connectNode(_audioDestinationNode);
         }
 
         if (userMediaStream.getAudioTracks().length > 0) {
           final userAudioStreamSource =
-          _audioContext.createMediaStreamSource(userMediaStream);
+              _audioContext.createMediaStreamSource(userMediaStream);
           userAudioStreamSource.connectNode(_audioDestinationNode);
           if (disableUserAudio) {
             userMediaStream.getAudioTracks()[0].enabled = false;
@@ -167,9 +180,12 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   void _onStop(Event event) {
     try {
       print("xxx_onstop");
+      _audioSourceNodes = {};
       mediaRecorder = null;
       this.stream.getTracks().forEach((element) => element.stop());
       this.stream = null;
+      _audioContext = null;
+      _audioDestinationNode = null;
       final a = document.createElement("a") as AnchorElement;
       final url = Url.createObjectUrl(
           new Blob(List<dynamic>.from([recordedChunks]), mimeType));
@@ -180,7 +196,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       a.click();
       Url.revokeObjectUrl(url);
       _onStopCompleter?.complete(this.name);
-      this.onStop?.call(url);
+      this.onStop?.call(this.name);
       this.onStop = null;
     } catch (ex, s) {
       print("Error _onStop\n$ex\n$s");
@@ -208,6 +224,35 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
     } catch (error, stackTrace) {
       print(
           "Error: Cannot resumeRecordScreen\n${error.toString()}\n${stackTrace.toString()}");
+      return false;
+    }
+  }
+
+  @override
+  String addAudioTrack(MediaStream audioStream) {
+    try {
+      final audioSourceNode =
+          _audioContext.createMediaStreamSource(audioStream);
+      audioSourceNode.connectNode(_audioDestinationNode);
+
+      final id = Uuid().v4();
+      _audioSourceNodes[id] = audioSourceNode;
+      return id;
+    } catch (er, s) {
+      print("Error: Flutter screen record - Cannot add audio track\n$er\n$s");
+    }
+    return "";
+  }
+
+  @override
+  bool removeAudioTrack(String mediaStreamAudioSourceNodeId) {
+    try {
+      final audioSourceNode = _audioSourceNodes[mediaStreamAudioSourceNodeId];
+      audioSourceNode.disconnect(_audioDestinationNode);
+      return true;
+    } catch (er, s) {
+      print(
+          "Error: Flutter screen record - Cannot remove audio track\n$er\n$s");
       return false;
     }
   }

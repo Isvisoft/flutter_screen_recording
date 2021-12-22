@@ -1,3 +1,5 @@
+import 'dart:html' hide Platform;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_screen_recording_platform_interface/flutter_screen_recording_platform_interface.dart';
 import 'dart:async';
@@ -13,15 +15,14 @@ class FlutterScreenRecording {
   }) async {
     await _maybeStartFGS(titleNotification, messageNotification);
     final bool start =
-        await FlutterScreenRecordingPlatform.instance.startRecordScreen(
+    await FlutterScreenRecordingPlatform.instance.startRecordScreen(
       name,
       onStop: onStop,
     );
     return start;
   }
 
-  static Future<bool> startRecordScreenAndAudio(
-    String name, {
+  static Future<bool> startRecordScreenAndAudio(String name, {
     String titleNotification,
     String messageNotification,
     bool recordSystemAudio = true,
@@ -30,8 +31,8 @@ class FlutterScreenRecording {
   }) async {
     await _maybeStartFGS(titleNotification, messageNotification);
     final bool start =
-        await FlutterScreenRecordingPlatform.instance.startRecordScreenAndAudio(
-          name,
+    await FlutterScreenRecordingPlatform.instance.startRecordScreenAndAudio(
+      name,
       recordSystemAudio: recordSystemAudio,
       disableUserAudio: disableUserAudio,
       onStop: onStop,
@@ -41,15 +42,14 @@ class FlutterScreenRecording {
 
   static Future<String> get stopRecordScreen async {
     final String path =
-        await FlutterScreenRecordingPlatform.instance.stopRecordScreen;
+    await FlutterScreenRecordingPlatform.instance.stopRecordScreen;
     if (!kIsWeb && Platform.isAndroid) {
       await FlutterForegroundPlugin.stopForegroundService();
     }
     return path;
   }
 
-  static _maybeStartFGS(
-      String titleNotification, String messageNotification) async {
+  static _maybeStartFGS(String titleNotification, String messageNotification) async {
     if (!kIsWeb && Platform.isAndroid) {
       await FlutterForegroundPlugin.setServiceMethodInterval(seconds: 5);
       await FlutterForegroundPlugin.setServiceMethod(globalForegroundService);
@@ -77,4 +77,13 @@ class FlutterScreenRecording {
 
   static bool resumeRecordScreen() =>
       FlutterScreenRecordingPlatform.instance.resumeRecordScreen();
+
+  static String addAudioTrack(MediaStream audioStream) {
+    return FlutterScreenRecordingPlatform.instance.addAudioTrack(audioStream);
+  }
+
+  static bool removeAudioTrack(String mediaStreamAudioSourceNodeId) {
+    return FlutterScreenRecordingPlatform.instance
+        .removeAudioTrack(mediaStreamAudioSourceNodeId);
+  }
 }

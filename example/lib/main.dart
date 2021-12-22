@@ -116,21 +116,13 @@ class _MyAppState extends State<MyApp> {
     bool start = false;
 
     if (audio) {
-      start = await FlutterScreenRecording.startRecordScreenAndAudio("Title",
-          recordSystemAudio: true, disableUserAudio: false, onStop: (result) {
-        setState(() {
-          recording = false;
-          paused = false;
-        });
-      });
+      start = await FlutterScreenRecording.startRecordScreenAndAudio(
+        "Title",
+        onStop: _onStop,
+      );
     } else {
       start = await FlutterScreenRecording.startRecordScreen("Title",
-          onStop: (result) {
-        setState(() {
-          recording = false;
-          paused = false;
-        });
-      });
+          onStop: _onStop);
     }
 
     if (start) {
@@ -138,6 +130,13 @@ class _MyAppState extends State<MyApp> {
     }
 
     return start;
+  }
+
+  _onStop(result) {
+    setState(() {
+      recording = false;
+      paused = false;
+    });
   }
 
   stopScreenRecord() async {
