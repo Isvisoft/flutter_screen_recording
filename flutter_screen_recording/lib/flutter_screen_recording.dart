@@ -59,4 +59,6 @@ class FlutterScreenRecording {
 
   static bool resumeRecordScreen() =>
       FlutterScreenRecordingPlatform.instance.resumeRecordScreen();
+
+  static dynamic getRecorded() => FlutterScreenRecordingPlatform.instance.getRecorded();
 }
