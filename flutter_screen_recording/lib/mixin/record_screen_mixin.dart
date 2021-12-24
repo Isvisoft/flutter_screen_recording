@@ -49,37 +49,18 @@ mixin RecordScreenMixin {
     participantsAudioSourceNodeIds.clear();
   }
 
-  void storeAudioTrackReference(String uid, dynamic audioStream) {
-    try {
-      final audioStreamDart = audioStream as MediaStream;
-
-      participantsAudioTracks[uid] = audioStreamDart;
-    } catch (error, stackTrace) {
-      log(
-        "Error storeAudioTrackReference",
-        error: error,
-        stackTrace: stackTrace,
-      );
-    }
+  void storeAudioTrackReference(String uid, MediaStream audioStream) {
+    participantsAudioTracks[uid] = audioStream;
   }
 
   void removeAudioTrackReference(String uid) {
     participantsAudioTracks.remove(uid);
   }
 
-  void addAudioTrackToScreenRecord(String uid, dynamic audioStream) {
-    try {
-      final audioStreamDart = audioStream as MediaStream;
-      final result = FlutterScreenRecording.addAudioTrack(audioStreamDart);
+  void addAudioTrackToScreenRecord(String uid, MediaStream audioStream) {
+    final result = FlutterScreenRecording.addAudioTrack(audioStream);
 
-      participantsAudioSourceNodeIds[uid] = result;
-    } catch (error, stackTrace) {
-      log(
-        "Error addAudioTrackToScreenRecord",
-        error: error,
-        stackTrace: stackTrace,
-      );
-    }
+    participantsAudioSourceNodeIds[uid] = result;
   }
 
   void removeAudioTrackFromScreenRecord(dynamic uid) {
