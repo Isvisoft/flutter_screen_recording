@@ -50,7 +50,17 @@ mixin RecordScreenMixin {
   }
 
   void storeAudioTrackReference(String uid, dynamic audioStream) {
-    participantsAudioTracks[uid] = audioStream as MediaStream;
+    try {
+      final audioStreamDart = audioStream as MediaStream;
+
+      participantsAudioTracks[uid] = audioStreamDart;
+    } catch (error, stackTrace) {
+      log(
+        "Error storeAudioTrackReference",
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   void removeAudioTrackReference(String uid) {
