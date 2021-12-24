@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:html';
-import 'package:flutter/material.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
 
 mixin RecordScreenMixin {
@@ -44,7 +43,7 @@ mixin RecordScreenMixin {
     FlutterScreenRecording.stopRecordScreen;
   }
 
-  void onStopRecording(result) {
+  void onStopRecording(String fileName) {
     recordingScreen = false;
     recordingStatusStreamController.add(false);
     participantsAudioSourceNodeIds.clear();
@@ -98,31 +97,5 @@ mixin RecordScreenMixin {
     participantsAudioSourceNodeIds.clear();
     recordingStatusStreamController.close();
     recordPauseStatusStreamController.close();
-  }
-
-  Widget buildRecordingPauseStatusContainer(
-    BuildContext context,
-    Widget Function(BuildContext context, bool paused) builder,
-  ) {
-    return StreamBuilder<bool>(
-      initialData: false,
-      stream: recordPauseStatusStreamController.stream,
-      builder: (context, snapshot) {
-        return builder(context, snapshot.data);
-      },
-    );
-  }
-
-  Widget buildRecordingStatusContainer(
-    BuildContext context,
-    Widget Function(BuildContext context, bool recording) builder,
-  ) {
-    return StreamBuilder<bool>(
-      initialData: false,
-      stream: recordingStatusStreamController.stream,
-      builder: (context, snapshot) {
-        return builder(context, snapshot.data);
-      },
-    );
   }
 }
