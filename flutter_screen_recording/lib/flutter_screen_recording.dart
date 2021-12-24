@@ -5,6 +5,7 @@ import 'package:flutter_screen_recording_platform_interface/flutter_screen_recor
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_foreground_plugin/flutter_foreground_plugin.dart';
+export "mixin/record_screen_mixin.dart";
 
 class FlutterScreenRecording {
   static Future<bool> startRecordScreen(
