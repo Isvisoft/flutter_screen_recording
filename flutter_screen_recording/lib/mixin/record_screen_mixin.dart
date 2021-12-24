@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
@@ -10,21 +11,12 @@ mixin RecordScreenMixin {
   //Userid, mediaStreamAudioSourceNodeId
   final participantsAudioSourceNodeIds = <String, String>{};
 
-  final recordingStatusStreamController = StreamController<bool>()..add(false);
-  final recordPauseStatusStreamController = StreamController<bool>()
+  final recordingStatusStreamController = StreamController<bool>.broadcast()
+    ..add(false);
+  final recordPauseStatusStreamController = StreamController<bool>.broadcast()
     ..add(false);
 
-  Stream<bool> recordingStatusStream;
-  Stream<bool> recordPauseStatusStream;
-
   bool recordingScreen = false;
-
-  void onInitScreenRecord() {
-    recordingStatusStream =
-        recordingStatusStreamController.stream.asBroadcastStream();
-    recordPauseStatusStream =
-        recordPauseStatusStreamController.stream.asBroadcastStream();
-  }
 
   void startRecordScreen(String fileName) async {
     final result = await FlutterScreenRecording.startRecordScreenAndAudio(
@@ -67,10 +59,18 @@ mixin RecordScreenMixin {
   }
 
   void addAudioTrackToScreenRecord(String uid, dynamic audioStream) {
-    final result =
-        FlutterScreenRecording.addAudioTrack(audioStream as MediaStream);
+    try {
+      final audioStreamDart = audioStream as MediaStream;
+      final result = FlutterScreenRecording.addAudioTrack(audioStreamDart);
 
-    participantsAudioSourceNodeIds[uid] = result;
+      participantsAudioSourceNodeIds[uid] = result;
+    } catch (error, stackTrace) {
+      log(
+        "Error addAudioTrackToScreenRecord",
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   void removeAudioTrackFromScreenRecord(dynamic uid) {
@@ -106,7 +106,7 @@ mixin RecordScreenMixin {
   ) {
     return StreamBuilder<bool>(
       initialData: false,
-      stream: recordPauseStatusStream,
+      stream: recordPauseStatusStreamController.stream,
       builder: (context, snapshot) {
         return builder(context, snapshot.data);
       },
@@ -119,7 +119,7 @@ mixin RecordScreenMixin {
   ) {
     return StreamBuilder<bool>(
       initialData: false,
-      stream: recordingStatusStream,
+      stream: recordingStatusStreamController.stream,
       builder: (context, snapshot) {
         return builder(context, snapshot.data);
       },
