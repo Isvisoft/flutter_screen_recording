@@ -93,6 +93,7 @@ mixin RecordScreenMixin {
   }
 
   void onDisposeScreenRecord() {
+    recordingScreen = false;
     participantsAudioTracks.clear();
     participantsAudioSourceNodeIds.clear();
     recordingStatusStreamController.close();
