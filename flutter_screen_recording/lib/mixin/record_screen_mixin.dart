@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:html';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
 
@@ -57,6 +56,12 @@ mixin RecordScreenMixin {
     participantsAudioTracks.remove(uid);
   }
 
+  void removeAudioTracksReferences(List<String> listUid) {
+    for (final uid in listUid) {
+      removeAudioTrackReference(uid);
+    }
+  }
+
   void addAudioTrackToScreenRecord(String uid, MediaStream audioStream) {
     final result = FlutterScreenRecording.addAudioTrack(audioStream);
 
@@ -69,6 +74,12 @@ mixin RecordScreenMixin {
       FlutterScreenRecording.removeAudioTrack(mediaStreamAudioSourceNodeId);
     }
     participantsAudioSourceNodeIds.remove(uid);
+  }
+
+  void removeAudioTracksFromScreenRecord(List<String> listUid) {
+    for (final uid in listUid) {
+      removeAudioTrackFromScreenRecord(uid);
+    }
   }
 
   void addCurrentAudioTracksToRecordScreenStream() {

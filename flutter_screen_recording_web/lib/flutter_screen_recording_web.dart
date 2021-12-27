@@ -21,6 +21,8 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   String mimeType;
   Completer<String> _onStopCompleter;
   Function(String result) _onStopCallback;
+  MediaStream _userMediaStream;
+  MediaStream _displayMediaStream;
 
   AudioContext _audioContext;
   MediaStreamAudioDestinationNode _audioDestinationNode;
@@ -74,11 +76,10 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   }) async {
     try {
       this._onStopCallback = onStop;
-      var userMediaStream;
       if (recordAudio) {
-        userMediaStream = await navigator.getUserMedia({"audio": true});
+        _userMediaStream = await navigator.getUserMedia({"audio": true});
       }
-      var displayMediaStream = await navigator.getDisplayMedia({
+      _displayMediaStream = await navigator.getDisplayMedia({
         "audio": recordSystemAudio,
         "video": {
           'width': {'ideal': 1920},
@@ -86,7 +87,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
         }
       });
 
-      stream = MediaStream([displayMediaStream.getVideoTracks()[0]]);
+      stream = MediaStream([_displayMediaStream.getVideoTracks()[0]]);
 
       this.name = name;
 
@@ -96,19 +97,19 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
         _audioSourceNodes = {};
 
         if (recordSystemAudio &&
-            displayMediaStream.getAudioTracks().length > 0) {
+            _displayMediaStream.getAudioTracks().length > 0) {
           final displayAudioStreamSource =
               _audioContext.createMediaStreamSource(
-                  MediaStream([displayMediaStream.getAudioTracks()[0]]));
+                  MediaStream([_displayMediaStream.getAudioTracks()[0]]));
           displayAudioStreamSource.connectNode(_audioDestinationNode);
         }
 
-        if (userMediaStream.getAudioTracks().length > 0) {
+        if (_userMediaStream.getAudioTracks().length > 0) {
           final userAudioStreamSource =
-              _audioContext.createMediaStreamSource(userMediaStream);
+              _audioContext.createMediaStreamSource(_userMediaStream);
           userAudioStreamSource.connectNode(_audioDestinationNode);
           if (disableUserAudio) {
-            userMediaStream.getAudioTracks()[0].enabled = false;
+            _userMediaStream.getAudioTracks()[0].enabled = false;
           }
         }
 
@@ -145,7 +146,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
 
       _onStopCompleter = new Completer<String>();
 
-      displayMediaStream.addEventListener("inactive", (event) {
+      _displayMediaStream.addEventListener("inactive", (event) {
         if (mediaRecorder != null && mediaRecorder.state != "inactive") {
           stopRecordScreen;
         }
@@ -164,7 +165,15 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
 
   @override
   Future<String> get stopRecordScreen {
-    mediaRecorder.stop();
+    try {
+      mediaRecorder.stop();
+    } catch (error, stackTrace) {
+      log(
+        "Error stopRecordScreen",
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
     return _onStopCompleter?.future;
   }
 
@@ -172,8 +181,9 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
     try {
       _audioSourceNodes = {};
       mediaRecorder = null;
-      this.stream.getTracks().forEach((element) => element.stop());
-      this.stream = null;
+      _stopAndResetMediaStream(stream);
+      _stopAndResetMediaStream(_userMediaStream);
+      _stopAndResetMediaStream(_displayMediaStream);
       _audioContext = null;
       _audioDestinationNode = null;
       final downloadVideoElement = document.createElement("a") as AnchorElement;
@@ -192,6 +202,13 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       print("Error _onStop record \n$error\n$stackTrace");
       _onStopCompleter?.completeError(error, stackTrace);
     }
+  }
+
+  void _stopAndResetMediaStream(MediaStream mediaStream) {
+    mediaStream?.getTracks()?.forEach((track) {
+      track.stop();
+    });
+    mediaStream = null;
   }
 
   @override
