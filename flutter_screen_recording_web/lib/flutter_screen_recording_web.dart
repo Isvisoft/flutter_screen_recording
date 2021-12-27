@@ -21,6 +21,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   String mimeType;
   Completer<String> _onStopCompleter;
   Function(String result) _onStopCallback;
+  MediaStream _userMediaStream;
 
   AudioContext _audioContext;
   MediaStreamAudioDestinationNode _audioDestinationNode;
@@ -74,9 +75,8 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   }) async {
     try {
       this._onStopCallback = onStop;
-      var userMediaStream;
       if (recordAudio) {
-        userMediaStream = await navigator.getUserMedia({"audio": true});
+        _userMediaStream = await navigator.getUserMedia({"audio": true});
       }
       var displayMediaStream = await navigator.getDisplayMedia({
         "audio": recordSystemAudio,
@@ -103,12 +103,12 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
           displayAudioStreamSource.connectNode(_audioDestinationNode);
         }
 
-        if (userMediaStream.getAudioTracks().length > 0) {
+        if (_userMediaStream.getAudioTracks().length > 0) {
           final userAudioStreamSource =
-              _audioContext.createMediaStreamSource(userMediaStream);
+              _audioContext.createMediaStreamSource(_userMediaStream);
           userAudioStreamSource.connectNode(_audioDestinationNode);
           if (disableUserAudio) {
-            userMediaStream.getAudioTracks()[0].enabled = false;
+            _userMediaStream.getAudioTracks()[0].enabled = false;
           }
         }
 
@@ -164,7 +164,16 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
 
   @override
   Future<String> get stopRecordScreen {
-    mediaRecorder.stop();
+    try {
+      mediaRecorder.stop();
+    } catch (error, stackTrace) {
+      print("Error stopRecordScreen $error $stackTrace");
+      log(
+        "Error stopRecordScreen",
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
     return _onStopCompleter?.future;
   }
 
@@ -176,6 +185,10 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       this.stream = null;
       _audioContext = null;
       _audioDestinationNode = null;
+      _userMediaStream?.getTracks()?.forEach((track) {
+        track.stop();
+      });
+      _userMediaStream = null;
       final downloadVideoElement = document.createElement("a") as AnchorElement;
       final url = Url.createObjectUrl(
           new Blob(List<dynamic>.from([recordedChunks]), mimeType));
