@@ -16,7 +16,7 @@ mixin RecordScreenMixin {
 
   bool recordingScreen = false;
 
-  void startRecordScreen(String fileName) async {
+  Future<bool> startRecordScreen(String fileName) async {
     final result = await FlutterScreenRecording.startRecordScreenAndAudio(
       fileName,
       recordSystemAudio: true,
@@ -26,6 +26,7 @@ mixin RecordScreenMixin {
     recordingScreen = result;
     recordingStatusStreamController.add(result);
     addCurrentAudioTracksToRecordScreenStream();
+    return result;
   }
 
   void pauseRecordScreen() {

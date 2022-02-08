@@ -156,8 +156,12 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
 
       this.mediaRecorder.start();
       return true;
-    } on Error catch (error, stackTrace) {
-      print("--->" + error.toString() + stackTrace.toString());
+    } catch (error, stackTrace) {
+      log(
+        "Error _startRecordScreen",
+        error: error,
+        stackTrace: stackTrace,
+      );
 
       return false;
     }
