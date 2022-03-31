@@ -55,7 +55,7 @@ class FlutterScreenRecordingPlugin(
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent): Boolean {
 
         if (requestCode == SCREEN_RECORD_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
@@ -160,7 +160,7 @@ class FlutterScreenRecordingPlugin(
             mMediaRecorder?.prepare()
             mMediaRecorder?.start()
         } catch (e: IOException) {
-            Log.d("--INIT-RECORDER", e.message)
+            Log.d("--INIT-RECORDER", e.message.toString())
             println("Error startRecordScreen")
             println(e.message)
         }
@@ -179,7 +179,7 @@ class FlutterScreenRecordingPlugin(
             println("stopRecordScreen success")
 
         } catch (e: Exception) {
-            Log.d("--INIT-RECORDER", e.message)
+            Log.d("--INIT-RECORDER", e.message.toString())
             println("stopRecordScreen error")
             println(e.message)
 
