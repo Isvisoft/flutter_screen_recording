@@ -19,6 +19,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_foreground_task: ^3.7.3
   permission_handler: ^4.1.0
   open_file: ^3.0.1
 
