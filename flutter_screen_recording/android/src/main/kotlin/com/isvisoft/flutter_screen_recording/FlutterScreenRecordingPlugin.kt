@@ -60,7 +60,7 @@ class FlutterScreenRecordingPlugin(
         if (requestCode == SCREEN_RECORD_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 mMediaProjectionCallback = MediaProjectionCallback()
-                mMediaProjection = mProjectionManager?.getMediaProjection(resultCode, data)
+                mMediaProjection = mProjectionManager?.getMediaProjection(resultCode, data!!)
                 mMediaProjection?.registerCallback(mMediaProjectionCallback, null)
                 mVirtualDisplay = createVirtualDisplay()
                 _result.success(true)
@@ -160,14 +160,14 @@ class FlutterScreenRecordingPlugin(
             mMediaRecorder?.prepare()
             mMediaRecorder?.start()
         } catch (e: IOException) {
-            Log.d("--INIT-RECORDER", e.message)
+            Log.d("--INIT-RECORDER", e.message+"")
             println("Error startRecordScreen")
             println(e.message)
         }
 
         val permissionIntent = mProjectionManager?.createScreenCaptureIntent()
 //        ActivityCompat.startActivityForResult((registrar.context().applicationContext as FlutterApplication).currentActivity, permissionIntent!!, SCREEN_RECORD_REQUEST_CODE, null)
-        ActivityCompat.startActivityForResult(registrar.activity(), permissionIntent!!, SCREEN_RECORD_REQUEST_CODE, null)
+        ActivityCompat.startActivityForResult(registrar.activity()!!, permissionIntent!!, SCREEN_RECORD_REQUEST_CODE, null)
 
     }
 
@@ -179,7 +179,7 @@ class FlutterScreenRecordingPlugin(
             println("stopRecordScreen success")
 
         } catch (e: Exception) {
-            Log.d("--INIT-RECORDER", e.message)
+            Log.d("--INIT-RECORDER", e.message +"")
             println("stopRecordScreen error")
             println(e.message)
 
