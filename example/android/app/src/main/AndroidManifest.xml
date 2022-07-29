@@ -4,6 +4,13 @@
     <application
         android:label="flutter_screen_recording_example"
         android:icon="@mipmap/ic_launcher">
+
+        <service
+            android:name="com.foregroundservice.ForegroundService"
+            android:foregroundServiceType="mediaProjection">
+
+        </service>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -17,7 +24,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <service android:name="com.pravera.flutter_foreground_task.service.ForegroundService" />
     </application>
 
     <meta-data

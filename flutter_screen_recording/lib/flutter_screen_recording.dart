@@ -12,7 +12,7 @@ class FlutterScreenRecording {
   }
 
   static Future<bool> startRecordScreenAndAudio(String name, {String titleNotification, String messageNotification}) async {
-    await _maybeStartFGS(titleNotification, messageNotification);
+    //await _maybeStartFGS(titleNotification, messageNotification);
     final bool start = await FlutterScreenRecordingPlatform.instance.startRecordScreenAndAudio(name);
     return start;
   }
@@ -20,7 +20,6 @@ class FlutterScreenRecording {
   static Future<String> get stopRecordScreen async {
     final String path = await FlutterScreenRecordingPlatform.instance.stopRecordScreen;
     if (!kIsWeb && Platform.isAndroid) {
-      // await FlutterForegroundPlugin.stopForegroundService();
       FlutterForegroundTask.stopService();
     }
     return path;
@@ -28,20 +27,6 @@ class FlutterScreenRecording {
 
   static  _maybeStartFGS(String titleNotification, String messageNotification) async {
     if (!kIsWeb && Platform.isAndroid) {
-      // await FlutterForegroundPlugin.setServiceMethodInterval(seconds: 5);
-      // await FlutterForegroundPlugin.setServiceMethod(globalForegroundService);
-      // return await FlutterForegroundPlugin.startForegroundService(
-      //   holdWakeLock: false,
-      //   onStarted: () async {
-      //     print("Foreground on Started");
-      //   },
-      //   onStopped: () {
-      //     print("Foreground on Stopped");
-      //   },
-      //   title: titleNotification,
-      //   content: messageNotification,
-      //   iconName: "org_thebus_foregroundserviceplugin_notificationicon",
-      // );
 
       await FlutterForegroundTask.init(
         androidNotificationOptions: AndroidNotificationOptions(
