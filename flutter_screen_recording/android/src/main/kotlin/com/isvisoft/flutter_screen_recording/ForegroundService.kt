@@ -13,8 +13,6 @@ import com.isvisoft.flutter_screen_recording.FlutterScreenRecordingPlugin
 import com.isvisoft.flutter_screen_recording.R
 
 
-
-
 class ForegroundService : Service() {
     private val CHANNEL_ID = "ForegroundService Kotlin"
     companion object {
@@ -39,7 +37,7 @@ class ForegroundService : Service() {
                 0, notificationIntent, 0
         )
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Flutter Screen Rxecording")
+                .setContentTitle("Flutter Screen Recording")
                 .setContentText(input)
                 .setSmallIcon(R.drawable.icon)
                 .setContentIntent(pendingIntent)

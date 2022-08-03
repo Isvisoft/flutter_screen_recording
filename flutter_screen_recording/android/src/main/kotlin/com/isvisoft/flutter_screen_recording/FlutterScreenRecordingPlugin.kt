@@ -40,20 +40,13 @@ class FlutterScreenRecordingPlugin(
     var mVirtualDisplay: VirtualDisplay? = null
     var mDisplayWidth: Int = 1280
     var mDisplayHeight: Int = 800
-//    var storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator
     var videoName: String? = ""
+    var mFileName: String? = ""
     var recordAudio: Boolean? = false;
     private val SCREEN_RECORD_REQUEST_CODE = 333
-//    private val SCREEN_STOP_RECORD_REQUEST_CODE = 334
 
     private lateinit var _result: MethodChannel.Result
 
-
-
-    //new
-    var mFileName: String? = null
-//    var screenWidth : Int = 0
-//    var screenHeight: Int = 0
 
     companion object {
         @JvmStatic
@@ -65,9 +58,7 @@ class FlutterScreenRecordingPlugin(
         }
     }
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-
         if (requestCode == SCREEN_RECORD_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 mMediaProjectionCallback = MediaProjectionCallback()
@@ -80,7 +71,6 @@ class FlutterScreenRecordingPlugin(
                 _result.success(false)
             }
         }
-
         return false
     }
 
@@ -91,62 +81,44 @@ class FlutterScreenRecordingPlugin(
                 ForegroundService.startService(registrar.context(), "Your screen is being recorded")
                 mProjectionManager = registrar.context().applicationContext.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
 
-
                 val metrics = DisplayMetrics()
-                val metrics2 = DisplayMetrics()
-
-
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     mMediaRecorder = MediaRecorder(registrar.context().applicationContext)
                 } else {
                     @Suppress("DEPRECATION")
                     mMediaRecorder = MediaRecorder()
                 }
-                mMediaRecorder = MediaRecorder()
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     val display = registrar.activity()!!.display
                     display?.getRealMetrics(metrics)
                 } else {
-                    val windowManager = registrar.context().applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
                     val defaultDisplay = registrar.context().applicationContext.getDisplay()
-                    windowManager.defaultDisplay.getMetrics(metrics2)
                     defaultDisplay?.getMetrics(metrics)
                 }
-
-                println("metrics2 $metrics2")
-                println("metrics $metrics")
-                mScreenDensity = metrics2.densityDpi
-                calculeResolution(metrics2)
-
                 mScreenDensity = metrics.densityDpi
                 calculeResolution(metrics)
                 videoName = call.argument<String?>("name")
                 recordAudio = call.argument<Boolean?>("audio")
                 startRecordScreen()
 
-                //result.success(true)
             } catch (e: Exception) {
                 println("Error onMethodCall startRecordScreen")
                 println(e.message)
                 result.success(false)
             }
-
         } else if (call.method == "stopRecordScreen") {
             try {
                 ForegroundService.stopService(registrar.context())
                 if (mMediaRecorder != null) {
                     stopRecordScreen()
                     result.success(mFileName)
-//                    result.success("${storePath}${videoName}.mp4")
                 } else {
                     result.success("")
                 }
             } catch (e: Exception) {
                 result.success("")
             }
-
         } else {
             result.notImplemented()
         }
@@ -162,7 +134,6 @@ class FlutterScreenRecordingPlugin(
             if (metrics.scaledDensity >= 3.0f) {
                 maxRes = 1920.0;
             }
-
             if (metrics.widthPixels > metrics.heightPixels) {
                 val rate = metrics.widthPixels / maxRes
                 mDisplayWidth = maxRes.toInt()
@@ -173,7 +144,6 @@ class FlutterScreenRecordingPlugin(
                 mDisplayWidth = (metrics.widthPixels / rate).toInt()
             }
         }
-
         println("Scaled Density")
         println(metrics.scaledDensity)
         println("Original Resolution ")
@@ -184,15 +154,13 @@ class FlutterScreenRecordingPlugin(
 
     fun startRecordScreen() {
         try {
-
             try {
                 mFileName = registrar.context().getExternalCacheDir()?.getAbsolutePath()
-                mFileName += "/audiorecordtest.mp4"
+                mFileName += "/$videoName.mp4"
             } catch (e: IOException) {
-                Log.e("hola", "Error creating name")
+                println("Error creating name")
                 return
             }
-
             mMediaRecorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE)
             if (recordAudio!!) {
                 mMediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -207,7 +175,6 @@ class FlutterScreenRecordingPlugin(
             mMediaRecorder?.setVideoEncodingBitRate(5 * mDisplayWidth * mDisplayHeight)
             mMediaRecorder?.setVideoFrameRate(30)
 
-
             mMediaRecorder?.prepare()
             mMediaRecorder?.start()
         } catch (e: IOException) {
@@ -216,11 +183,8 @@ class FlutterScreenRecordingPlugin(
             println("Error startRecordScreen")
             println(e.message)
         }
-
         val permissionIntent = mProjectionManager?.createScreenCaptureIntent()
-
         ActivityCompat.startActivityForResult(registrar.activity()!!, permissionIntent!!, SCREEN_RECORD_REQUEST_CODE, null)
-
     }
 
     fun stopRecordScreen() {
