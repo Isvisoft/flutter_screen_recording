@@ -32,9 +32,10 @@ class ForegroundService : Service() {
 
         createNotificationChannel()
         val notificationIntent = Intent(this, FlutterScreenRecordingPlugin::class.java)
+
         val pendingIntent = PendingIntent.getActivity(
                 this,
-                0, notificationIntent, 0
+                0, notificationIntent, PendingIntent.FLAG_MUTABLE
         )
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Flutter Screen Recording")

@@ -71,11 +71,5 @@
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
-<<<<<<< HEAD
-*.jar
-
-example/android/app/release/*
-=======
 .flutter-plugins
 .flutter-plugins-dependencies
->>>>>>> d82fbe461fe27fac2092c5231ee04bdd2983b908

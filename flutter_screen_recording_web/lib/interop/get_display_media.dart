@@ -40,7 +40,7 @@ class navigator {
 
   static Future<List<dynamic>> getSources() async {
     final devices = await HTML.window.navigator.mediaDevices.enumerateDevices();
-    final result = List<dynamic>();
+    final result = [];
     for (final device in devices) {
       result.add(<String, String>{
         'deviceId': device.deviceId,

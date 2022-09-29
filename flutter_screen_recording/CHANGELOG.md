@@ -1,3 +1,11 @@
+## 2.0.7
+
+- Bugs Android 12 fixed
+
+## 2.0.6
+
+- Support Android 12
+
 ## 2.0.5
 
 - foreground android
