@@ -2,24 +2,23 @@
 
 A new Flutter plugin for record the screen. This plug-in requires Android SDK 21+ and iOS 10+
 
-
-
 ## Getting Started
 
 This plugin can be used for record the screen on Android and iOS devices.
 
-1) For start the recording
+1. For start the recording
 
 ```dart
 bool started = FlutterScreenRecording.startRecordScreen(videoName);
 ```
+
 Or
 
 ```dart
 bool started = FlutterScreenRecording.startRecordScreenAndAudio(videoName);
 ```
 
-2) For stop the recording
+2. For stop the recording
 
 ```dart
 String path = FlutterScreenRecording.stopRecordScreen;
@@ -36,13 +35,17 @@ Require and add the following permissions in your manifest:
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 ```
 
-In the last Android version is requiered use a foreground service for record the screen, we added the [flutter foreground plugin](https://pub.dev/packages/flutter_foreground_plugin). 
+In the last Android version is requiered use a foreground service for record the screen, we added the [flutter foreground plugin](https://pub.dev/packages/flutter_foreground_plugin).
 
 ## iOS
 
-You only need add the permission message on the Info.plist 
+You only need add the permission message on the Info.plist
 
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Save video in gallery</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Save audio in video</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Save video in gallery</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Save audio in video</string>
+
+## WEB
+
+Just use it
