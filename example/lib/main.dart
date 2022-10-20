@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
             Text('Time: $_time\n'),
             !recording
                 ? Center(
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       child: Text("Record Screen"),
                       onPressed: () => startScreenRecord(false),
                     ),
@@ -68,13 +68,13 @@ class _MyAppState extends State<MyApp> {
                 : Container(),
             !recording
                 ? Center(
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       child: Text("Record Screen & audio"),
                       onPressed: () => startScreenRecord(true),
                     ),
                   )
                 : Center(
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       child: Text("Stop Record"),
                       onPressed: () => stopScreenRecord(),
                     ),
