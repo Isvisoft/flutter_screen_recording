@@ -2,6 +2,7 @@
     package="com.isvisoft.flutter_screen_recording_example"
     xmlns:tools="http://schemas.android.com/tools">
     <application
+        android:name="${applicationName}"
         android:label="flutter_screen_recording_example"
         android:icon="@mipmap/ic_launcher">
 

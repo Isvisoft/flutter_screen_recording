@@ -87,7 +87,7 @@ class _MyAppState extends State<MyApp> {
 
   startScreenRecord(bool audio) async {
     bool start = false;
-
+    print("uno startScreenRecord");
     if (audio) {
       start = await FlutterScreenRecording.startRecordScreenAndAudio("Title");
     } else {

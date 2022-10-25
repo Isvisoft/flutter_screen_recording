@@ -16,8 +16,10 @@ class MethodChannelFlutterScreenRecording
   }
 
   Future<bool> startRecordScreenAndAudio(String name) async {
+
     final bool start = await _channel
         .invokeMethod('startRecordScreen', {"name": name, "audio": true});
+
     return start;
   }
 

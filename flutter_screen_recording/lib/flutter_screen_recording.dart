@@ -6,7 +6,8 @@ import 'dart:io';
 
 class FlutterScreenRecording {
   static Future<bool> startRecordScreen(String name, {String titleNotification, String messageNotification}) async{
-    await _maybeStartFGS(titleNotification, messageNotification);
+    // await _maybeStartFGS(titleNotification, messageNotification);
+    print("uno FlutterScreenRecording");
     final bool start = await FlutterScreenRecordingPlatform.instance.startRecordScreen(name);
     return start;
   }
