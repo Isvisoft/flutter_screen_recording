@@ -4,7 +4,7 @@ version: 2.0.7
 homepage: "https://github.com/Isvisoft/flutter_screen_recording"
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:

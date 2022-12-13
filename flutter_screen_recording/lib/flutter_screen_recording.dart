@@ -1,17 +1,26 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_screen_recording_platform_interface/flutter_screen_recording_platform_interface.dart';
+//import 'file:D:/Workspace/flutter_screen_recording/flutter_screen_recording_platform_interface/lib/flutter_screen_recording_platform_interface.dart';
 import 'dart:async';
 import 'dart:io';
 
 class FlutterScreenRecording {
-  static Future<bool> startRecordScreen(String name, {String titleNotification, String messageNotification}) async{
-    await _maybeStartFGS(titleNotification, messageNotification);
+  static Future<bool> startRecordScreen(String name, {String? titleNotification, String? messageNotification}) async{
+    if(titleNotification == null ){
+      titleNotification = "";
+    }
+    if(messageNotification == null ){
+      messageNotification = "";
+    }
+
+    await _maybeStartFGS(titleNotification!, messageNotification!);
     final bool start = await FlutterScreenRecordingPlatform.instance.startRecordScreen(name);
+
     return start;
   }
 
-  static Future<bool> startRecordScreenAndAudio(String name, {String titleNotification, String messageNotification}) async {
+  static Future<bool> startRecordScreenAndAudio(String name, {String? titleNotification, String? messageNotification}) async {
     //await _maybeStartFGS(titleNotification, messageNotification);
     final bool start = await FlutterScreenRecordingPlatform.instance.startRecordScreenAndAudio(name);
     return start;
@@ -28,7 +37,7 @@ class FlutterScreenRecording {
   static  _maybeStartFGS(String titleNotification, String messageNotification) async {
     if (!kIsWeb && Platform.isAndroid) {
 
-      await FlutterForegroundTask.init(
+      FlutterForegroundTask.init(
         androidNotificationOptions: AndroidNotificationOptions(
           channelId: 'notification_channel_id',
           channelName: titleNotification,
@@ -45,16 +54,17 @@ class FlutterScreenRecording {
             // const NotificationButton(id: 'testButton', text: 'Test'),
           ],
         ),
-        // iosNotificationOptions: const IOSNotificationOptions(
-        //   showNotification: true,
-        //   playSound: false,
-        // ),
+        iosNotificationOptions: const IOSNotificationOptions(
+          showNotification: true,
+          playSound: false,
+        ),
         foregroundTaskOptions: const ForegroundTaskOptions(
           interval: 5000,
           autoRunOnBoot: true,
           allowWifiLock: true,
         ),
-        printDevLog: true,
+          //iosNotificationOptions:true,
+        //intDevLog: true,
       );
     }
   }

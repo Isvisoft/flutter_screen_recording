@@ -16,11 +16,20 @@ class _MyAppState extends State<MyApp> {
   int _time = 0;
 
   requestPermissions() async {
-    await PermissionHandler().requestPermissions([
-      PermissionGroup.storage,
-      PermissionGroup.photos,
-      PermissionGroup.microphone,
-    ]);
+    if (await Permission.storage.request().isDenied) {
+      await Permission.storage.request();
+    }
+    if (await Permission.photos.request().isDenied) {
+      await Permission.photos.request();
+    }
+    if (await Permission.microphone.request().isDenied) {
+      await Permission.microphone.request();
+    }
+    // await PermissionHandler().requestPermissions([
+    //   PermissionGroup.storage,
+    //   PermissionGroup.photos,
+    //   PermissionGroup.microphone,
+    // ]);
   }
 
   @override
