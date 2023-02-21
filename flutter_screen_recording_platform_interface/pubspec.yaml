@@ -1,6 +1,6 @@
 name: flutter_screen_recording_platform_interface
 description: A common platform interface for the flutter_screen_recording plugin
-version: 1.0.0
+version: 1.0.2
 homepage: "https://github.com/Isvisoft/flutter_screen_recording/tree/web/flutter_screen_recording_platform_interface"
 
 environment:

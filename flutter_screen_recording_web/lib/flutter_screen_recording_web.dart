@@ -10,11 +10,11 @@ import 'package:flutter_screen_recording_platform_interface/flutter_screen_recor
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
-  MediaStream stream;
-  String name;
-  MediaRecorder mediaRecorder;
-  Blob recordedChunks;
-  String mimeType;
+  MediaStream? stream;
+  String? name;
+  MediaRecorder? mediaRecorder;
+  Blob? recordedChunks;
+  String? mimeType;
 
   static registerWith(Registrar registrar) {
     FlutterScreenRecordingPlatform.instance = WebFlutterScreenRecording();
@@ -40,7 +40,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       stream = await navigator.getDisplayMedia({"audio": recordAudio, "video": recordVideo});
       this.name = name;
       if (recordAudio) {
-        stream.addTrack(audioStream.getAudioTracks()[0]);
+        stream!.addTrack(audioStream.getAudioTracks()[0]);
       }
 
       if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
@@ -68,21 +68,21 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
         mimeType = 'video/webm';
       }
 
-      this.mediaRecorder = new MediaRecorder(stream, {'mimeType': mimeType});
+      this.mediaRecorder = new MediaRecorder(stream!, {'mimeType': mimeType});
 
-      this.mediaRecorder.addEventListener('dataavailable', (Event event) {
+      this.mediaRecorder!.addEventListener('dataavailable', (Event event) {
         print("datavailable ${event.runtimeType}");
         recordedChunks = JsObject.fromBrowserObject(event)['data'];
         this.mimeType = mimeType;
         print("blob size: ${recordedChunks?.size ?? 'empty'}");
       });
 
-      this.stream.getVideoTracks()[0].addEventListener('ended', (Event event)  {
+      this.stream!.getVideoTracks()[0].addEventListener('ended', (Event event)  {
          //If user stop sharing screen, stop record
          stopRecordScreen;
       });
 
-      this.mediaRecorder.start();
+      this.mediaRecorder!.start();
 
       return true;
     } on Error catch (e) {
@@ -94,15 +94,15 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   @override
   Future<String> get stopRecordScreen {
     final c = new Completer<String>();
-    this.mediaRecorder.addEventListener("stop", (event) {
+    this.mediaRecorder!.addEventListener("stop", (event) {
 
       mediaRecorder = null;
-      this.stream.getTracks().forEach((element) => element.stop());
+      this.stream!.getTracks().forEach((element) => element.stop());
       this.stream = null;
       final a = document.createElement("a") as AnchorElement;
       final url = Url.createObjectUrl(
           new Blob(List<dynamic>.from([recordedChunks]), mimeType));
-      document.body.append(a);
+      document.body!.append(a);
       a.style.display = "none";
       a.href = url;
       a.download = this.name;
@@ -111,7 +111,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
 
       c.complete(this.name);
     });
-    mediaRecorder.stop();
+    mediaRecorder!.stop();
     return c.future;
   }
 }

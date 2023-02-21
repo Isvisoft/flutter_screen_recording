@@ -31,7 +31,7 @@ class navigator {
 
       final HTML.MediaStream jsStream =
           await JSUtils.promiseToFuture<HTML.MediaStream>(
-              JSUtils.callMethod(mediaDevices, 'getDisplayMedia', [arg]));
+              JSUtils.callMethod(mediaDevices!, 'getDisplayMedia', [arg]));
       return MediaStream(jsStream);
     } catch (e) {
       throw 'Unable to getDisplayMedia: ${e.toString()}';
@@ -39,7 +39,7 @@ class navigator {
   }
 
   static Future<List<dynamic>> getSources() async {
-    final devices = await HTML.window.navigator.mediaDevices.enumerateDevices();
+    final devices = await HTML.window.navigator.mediaDevices!.enumerateDevices();
     final result = [];
     for (final device in devices) {
       result.add(<String, String>{
