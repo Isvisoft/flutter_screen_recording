@@ -15,7 +15,7 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
   var nameVideo: String = ""
   var recordAudio: Bool = false
   var myResult: FlutterResult?
-  let screenSize = UIScreen.main.bounds
+  //let screenSize = UIScreen.main.bounds
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(
@@ -86,15 +86,25 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
         codec = AVVideoCodecH264
       }
 
-      let videoSettings: [String: Any] = [
-        AVVideoCodecKey: codec,
-        AVVideoWidthKey: screenSize.width,
-        AVVideoHeightKey: screenSize.height,
-        AVVideoCompressionPropertiesKey: [
-          AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
-          AVVideoAverageBitRateKey: 6000000
-        ],
-      ]
+//      let videoSettings: [String: Any] = [
+//        AVVideoCodecKey: codec,
+//        AVVideoWidthKey: screenSize.width,
+//        AVVideoHeightKey: screenSize.height,
+//        AVVideoCompressionPropertiesKey: [
+//          AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
+//          AVVideoAverageBitRateKey: 6000000
+//        ],
+//      ]
+
+        let videoSettings: [String : Any] = [
+            AVVideoCodecKey  : codec,
+            AVVideoWidthKey  : UIScreen.main.bounds.width,
+            AVVideoHeightKey : UIScreen.main.bounds.height,
+            AVVideoCompressionPropertiesKey: [
+            AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
+            AVVideoAverageBitRateKey: 6000000
+           ],
+        ]
 
       if recordAudio {
 
