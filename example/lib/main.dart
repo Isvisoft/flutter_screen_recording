@@ -16,11 +16,20 @@ class _MyAppState extends State<MyApp> {
   int _time = 0;
 
   requestPermissions() async {
-    await PermissionHandler().requestPermissions([
-      PermissionGroup.storage,
-      PermissionGroup.photos,
-      PermissionGroup.microphone,
-    ]);
+    if (await Permission.storage.request().isDenied) {
+      await Permission.storage.request();
+    }
+    if (await Permission.photos.request().isDenied) {
+      await Permission.photos.request();
+    }
+    if (await Permission.microphone.request().isDenied) {
+      await Permission.microphone.request();
+    }
+    // await PermissionHandler().requestPermissions([
+    //   PermissionGroup.storage,
+    //   PermissionGroup.photos,
+    //   PermissionGroup.microphone,
+    // ]);
   }
 
   @override
@@ -60,7 +69,7 @@ class _MyAppState extends State<MyApp> {
             Text('Time: $_time\n'),
             !recording
                 ? Center(
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       child: Text("Record Screen"),
                       onPressed: () => startScreenRecord(false),
                     ),
@@ -68,13 +77,13 @@ class _MyAppState extends State<MyApp> {
                 : Container(),
             !recording
                 ? Center(
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       child: Text("Record Screen & audio"),
                       onPressed: () => startScreenRecord(true),
                     ),
                   )
                 : Center(
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       child: Text("Stop Record"),
                       onPressed: () => stopScreenRecord(),
                     ),
@@ -87,7 +96,7 @@ class _MyAppState extends State<MyApp> {
 
   startScreenRecord(bool audio) async {
     bool start = false;
-    print("uno startScreenRecord");
+
     if (audio) {
       start = await FlutterScreenRecording.startRecordScreenAndAudio("Title");
     } else {
