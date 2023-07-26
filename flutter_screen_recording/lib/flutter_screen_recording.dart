@@ -17,6 +17,16 @@ class FlutterScreenRecording {
     return start;
   }
 
+  static Future<bool> resumeRecordScreen() async {
+    final bool resume = await FlutterScreenRecordingPlatform.instance.resumeRecordScreen();
+    return resume;
+  }
+
+  static Future<bool> pauseRecordScreen() async {
+    final bool pause = await FlutterScreenRecordingPlatform.instance.pauseRecordScreen();
+    return pause;
+  }
+
   static Future<String> get stopRecordScreen async {
     final String path = await FlutterScreenRecordingPlatform.instance.stopRecordScreen;
     if (!kIsWeb && Platform.isAndroid) {

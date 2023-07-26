@@ -114,4 +114,14 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
     mediaRecorder.stop();
     return c.future;
   }
+
+  @override
+  Future<bool> resumeRecordScreen() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> pauseRecordScreen() {
+    throw UnimplementedError();
+  }
 }

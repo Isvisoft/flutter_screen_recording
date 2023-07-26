@@ -122,6 +122,24 @@ class FlutterScreenRecordingPlugin(
             } catch (e: Exception) {
                 result.success("")
             }
+        } else if (call.method == "resumeRecordScreen"){
+            try {
+                resumeRecordScreen()
+                result.success(true)
+            } catch (e: Exception) {
+                result.success(false)
+                println("Error onMethodCall resumeRecordScreen")
+                println(e.message)
+            }
+        } else if (call.method == "pauseRecordScreen"){
+            try {
+                pauseRecordScreen()
+                result.success(true)
+            } catch (e: Exception) {
+                result.success(false)
+                println("Error onMethodCall pauseRecordScreen")
+                println(e.message)
+            }
         } else {
             result.notImplemented()
         }
@@ -176,7 +194,7 @@ class FlutterScreenRecordingPlugin(
             mMediaRecorder?.setVideoSize(mDisplayWidth, mDisplayHeight)
             mMediaRecorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
             mMediaRecorder?.setVideoEncodingBitRate(5 * mDisplayWidth * mDisplayHeight)
-            mMediaRecorder?.setVideoFrameRate(30)
+            mMediaRecorder?.setVideoFrameRate(60)
 
             mMediaRecorder?.prepare()
             mMediaRecorder?.start()
@@ -209,6 +227,29 @@ class FlutterScreenRecordingPlugin(
     private fun createVirtualDisplay(): VirtualDisplay? {
         return mMediaProjection?.createVirtualDisplay("MainActivity", mDisplayWidth, mDisplayHeight, mScreenDensity,
                 DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mMediaRecorder?.surface, null, null)
+    }
+
+    fun pauseRecordScreen() {
+        try {
+            println("pauseRecordScreen entered")
+
+            mMediaRecorder?.pause()
+        } catch (e: Exception) {
+            Log.d("--INIT-RECORDER", e.message +"")
+            println("pauseRecordScreen error")
+        }
+
+    }
+
+    fun resumeRecordScreen() {
+        try {
+            println("resumeRecordScreen entered")
+
+            mMediaRecorder?.resume()
+        } catch (e: Exception) {
+            Log.d("--INIT-RECORDER", e.message +"")
+            println("resumeRecordScreen error")
+        }
     }
 
     private fun stopScreenSharing() {
