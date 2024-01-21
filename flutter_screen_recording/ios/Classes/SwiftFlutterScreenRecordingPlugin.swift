@@ -97,7 +97,7 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
 //      ]
 
         let videoSettings: [String : Any] = [
-            AVVideoCodecKey  : codec,
+            AVVideoCodecKey  : AVVideoCodecH264,
             AVVideoWidthKey  : UIScreen.main.bounds.width,
             AVVideoHeightKey : UIScreen.main.bounds.height,
             AVVideoCompressionPropertiesKey: [
