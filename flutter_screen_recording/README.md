@@ -36,6 +36,14 @@ Require and add the following permissions in your manifest:
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 ```
 
+To your Android Manifest, under the `<application>` tag, add the following:
+```xml
+<service
+	android:name="com.foregroundservice.ForegroundService"
+	android:foregroundServiceType="mediaProjection">
+</service>
+```
+
 ## iOS
 
 You only need add the permission message on the Info.plist 
