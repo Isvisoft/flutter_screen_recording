@@ -90,6 +90,10 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
         AVVideoCodecKey: codec,
         AVVideoWidthKey: screenSize.width,
         AVVideoHeightKey: screenSize.height,
+        AVVideoCompressionPropertiesKey: [
+          AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
+          AVVideoAverageBitRateKey: 6000000
+        ],
       ]
 
       if recordAudio {
@@ -162,7 +166,7 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
               case RPSampleBufferType.audioMic:
                 if self.recordAudio {
                   if self.audioInput.isReadyForMoreMediaData {
-                    print("audioMic data added")
+                    // print("audioMic data added")
                     if self.audioInput.append(cmSampleBuffer) == false {
                       print(" we have a problem writing audio")
                       self.myResult!(false)
@@ -170,8 +174,8 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
                   }
                 }
 
-              default:
-                print("not a video sample, so ignore")
+              // default:
+              // print("not a video sample, so ignore")
               }
             }
           }
