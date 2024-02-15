@@ -21,12 +21,20 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   }
 
   @override
-  Future<bool> startRecordScreen(String name) async {
+  Future<bool> startRecordScreen(
+    String name, {
+    String notificationTitle = "",
+    String notificationMessage = "",
+  }) async {
     return _record(name, true, false);
   }
 
   @override
-  Future<bool> startRecordScreenAndAudio(String name) async {
+  Future<bool> startRecordScreenAndAudio(
+    String name, {
+    String notificationTitle = "",
+    String notificationMessage = "",
+  }) async {
     return _record(name, true, true);
   }
 
