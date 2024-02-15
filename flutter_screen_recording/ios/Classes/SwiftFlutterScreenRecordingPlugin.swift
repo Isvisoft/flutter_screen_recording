@@ -174,7 +174,8 @@ public class SwiftFlutterScreenRecordingPlugin: NSObject, FlutterPlugin {
                   }
                 }
 
-              // default:
+              default:
+              ();
               // print("not a video sample, so ignore")
               }
             }
