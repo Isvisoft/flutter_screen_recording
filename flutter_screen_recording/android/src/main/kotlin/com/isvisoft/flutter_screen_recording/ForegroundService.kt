@@ -16,9 +16,10 @@ import com.isvisoft.flutter_screen_recording.R
 class ForegroundService : Service() {
     private val CHANNEL_ID = "ForegroundService Kotlin"
     companion object {
-        fun startService(context: Context, message: String) {
+        fun startService(context: Context, title: String, message: String) {
             val startIntent = Intent(context, ForegroundService::class.java)
-            startIntent.putExtra("inputExtra", message)
+            startIntent.putExtra("messageExtra", message)
+            startIntent.putExtra("titleExtra", title)
             ContextCompat.startForegroundService(context, startIntent)
         }
         fun stopService(context: Context) {
@@ -28,7 +29,14 @@ class ForegroundService : Service() {
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        val input = intent?.getStringExtra("inputExtra")
+        var title = intent?.getStringExtra("titleExtra")
+        if (title == null) {
+            title = "Flutter Screen Recording";
+        }
+        var message = intent?.getStringExtra("messageExtra")
+        if (message == null) {
+            message = ""
+        }
 
         createNotificationChannel()
         val notificationIntent = Intent(this, FlutterScreenRecordingPlugin::class.java)
@@ -38,8 +46,8 @@ class ForegroundService : Service() {
                 0, notificationIntent, PendingIntent.FLAG_MUTABLE
         )
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Flutter Screen Recording")
-                .setContentText(input)
+                .setContentTitle(title)
+                .setContentText(message)
                 .setSmallIcon(R.drawable.icon)
                 .setContentIntent(pendingIntent)
                 .build()

@@ -9,15 +9,31 @@ class MethodChannelFlutterScreenRecording
   static const MethodChannel _channel =
       const MethodChannel('flutter_screen_recording');
 
-  Future<bool> startRecordScreen(String name) async {
-    final bool start = await _channel
-        .invokeMethod('startRecordScreen', {"name": name, "audio": false});
+  Future<bool> startRecordScreen(
+    String name, {
+    String notificationTitle = "",
+    String notificationMessage = "",
+  }) async {
+    final bool start = await _channel.invokeMethod('startRecordScreen', {
+      "name": name,
+      "audio": false,
+      "title": notificationTitle,
+      "message": notificationMessage,
+    });
     return start;
   }
 
-  Future<bool> startRecordScreenAndAudio(String name) async {
-    final bool start = await _channel
-        .invokeMethod('startRecordScreen', {"name": name, "audio": true});
+  Future<bool> startRecordScreenAndAudio(
+    String name, {
+    String notificationTitle = "",
+    String notificationMessage = "",
+  }) async {
+    final bool start = await _channel.invokeMethod('startRecordScreen', {
+      "name": name,
+      "audio": true,
+      "title": notificationTitle,
+      "message": notificationMessage,
+    });
     return start;
   }
 
