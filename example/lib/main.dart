@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
 import 'package:quiver/async.dart';
@@ -25,11 +27,6 @@ class _MyAppState extends State<MyApp> {
     if (await Permission.microphone.request().isDenied) {
       await Permission.microphone.request();
     }
-    // await PermissionHandler().requestPermissions([
-    //   PermissionGroup.storage,
-    //   PermissionGroup.photos,
-    //   PermissionGroup.microphone,
-    // ]);
   }
 
   @override
@@ -96,11 +93,20 @@ class _MyAppState extends State<MyApp> {
 
   startScreenRecord(bool audio) async {
     bool start = false;
+    DartPluginRegistrant.ensureInitialized();
 
     if (audio) {
-      start = await FlutterScreenRecording.startRecordScreenAndAudio("Title");
+      start = await FlutterScreenRecording.startRecordScreenAndAudio(
+        "Title",
+        titleNotification: "titleNotification",
+        messageNotification: "messageNotification",
+      );
     } else {
-      start = await FlutterScreenRecording.startRecordScreen("Title");
+      start = await FlutterScreenRecording.startRecordScreen(
+        "Title",
+        titleNotification: "titleNotification",
+        messageNotification: "messageNotification",
+      );
     }
 
     if (start) {
