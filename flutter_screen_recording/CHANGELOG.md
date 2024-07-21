@@ -1,3 +1,7 @@
+## 2.0.12
+
+- Bug fixed
+
 ## 2.0.11
 
 - Android v2 embedding

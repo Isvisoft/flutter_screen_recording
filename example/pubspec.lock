@@ -82,18 +82,17 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_foreground_task
-      sha256: "5eb81adfd98c77f4d4803ae80d7e0573fd35f706fce6aaa7376656a15ba2d1e0"
+      sha256: "9d71e28c0f9657b7366d5c769a25b4c6efe1bb4080ee4c74764295e419036000"
       url: "https://pub.dev"
     source: hosted
-    version: "3.10.0"
+    version: "6.0.0+1"
   flutter_screen_recording:
     dependency: "direct main"
     description:
-      name: flutter_screen_recording
-      sha256: d65d01c04e30591e2f69e413863aa3bd0cf473fae93345597a4e5335376a5456
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.8"
+      path: "../flutter_screen_recording"
+      relative: true
+    source: path
+    version: "2.0.9"
   flutter_screen_recording_platform_interface:
     dependency: transitive
     description:
@@ -304,14 +303,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
-  shared_preferences_ios:
-    dependency: transitive
-    description:
-      name: shared_preferences_ios
-      sha256: "585a14cefec7da8c9c2fb8cd283a3bb726b4155c0952afe6a0caaa7b2272de34"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.1"
   shared_preferences_linux:
     dependency: transitive
     description:
