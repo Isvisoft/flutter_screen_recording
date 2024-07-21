@@ -1,3 +1,15 @@
+## 2.0.12
+
+- Bug fixed
+
+## 2.0.11
+
+- Android v2 embedding
+
+## 2.0.10
+
+- Update kotlin and gradle versions
+
 ## 2.0.9
 
 - Update flutter
