@@ -92,23 +92,23 @@ packages:
       path: "../flutter_screen_recording"
       relative: true
     source: path
-    version: "2.0.12"
+    version: "2.0.13"
   flutter_screen_recording_platform_interface:
     dependency: transitive
     description:
       name: flutter_screen_recording_platform_interface
-      sha256: e177557cbca61d8cf0f6ecc3f65ab5638dfa912f00ac8c31ac7f0f40c241ec81
+      sha256: "9e07f78a2529bc5b6c77d045b392ed4062445543613fcad431c4cc1da57558d7"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   flutter_screen_recording_web:
     dependency: transitive
     description:
       name: flutter_screen_recording_web
-      sha256: "1dedf6e067b4c23b8c357200e6fa811ab9a894371721b31bac027bd7c06a4b6e"
+      sha256: dd4d59501c1947c882d061044f620e98c9b26fc7a8672a684fa91918edf2e9f8
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.4"
+    version: "1.0.5"
   flutter_test:
     dependency: "direct dev"
     description: flutter
