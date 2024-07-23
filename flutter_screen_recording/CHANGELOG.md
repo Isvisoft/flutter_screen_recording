@@ -1,3 +1,7 @@
+## 2.0.14
+
+- Bug fixed ios
+
 ## 2.0.13
 
 - Bug fixed
