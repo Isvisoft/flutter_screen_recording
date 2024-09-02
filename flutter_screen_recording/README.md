@@ -56,4 +56,6 @@ You only need add the permission message on the Info.plist
 ## Web
 This plugin compiles for the web platform since version 2.0.0.
 
+This version is fixed for landscape recording IOS
+
 
