@@ -92,7 +92,7 @@ packages:
       path: "../flutter_screen_recording"
       relative: true
     source: path
-    version: "2.0.13"
+    version: "2.0.14"
   flutter_screen_recording_platform_interface:
     dependency: transitive
     description:
