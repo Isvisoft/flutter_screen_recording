@@ -1,3 +1,7 @@
+## 2.0.15
+
+- try/catch control
+
 ## 2.0.14
 
 - Bug fixed ios
