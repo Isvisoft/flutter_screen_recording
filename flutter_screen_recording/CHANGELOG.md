@@ -1,3 +1,7 @@
+## 2.0.16
+
+- Update audio codecs android
+
 ## 2.0.15
 
 - try/catch control

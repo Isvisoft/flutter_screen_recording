@@ -176,8 +176,8 @@ class FlutterScreenRecordingPlugin() : MethodCallHandler, PluginRegistry.Activit
             mMediaRecorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE)
             if (recordAudio!!) {
                 mMediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC);
-                mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                mMediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                mMediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
             } else {
                 mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             }
@@ -189,18 +189,20 @@ class FlutterScreenRecordingPlugin() : MethodCallHandler, PluginRegistry.Activit
 
             mMediaRecorder?.prepare()
             mMediaRecorder?.start()
-        } catch (e: IOException) {
+            val permissionIntent = mProjectionManager?.createScreenCaptureIntent()
+            ActivityCompat.startActivityForResult(
+                activityBinding!!.activity!!,
+                permissionIntent!!,
+                SCREEN_RECORD_REQUEST_CODE,
+                null
+            )
+
+        } catch (e: Exception) {
             Log.d("--INIT-RECORDER", e.message + "")
             println("Error startRecordScreen")
             println(e.message)
         }
-        val permissionIntent = mProjectionManager?.createScreenCaptureIntent()
-        ActivityCompat.startActivityForResult(
-            activityBinding!!.activity!!,
-            permissionIntent!!,
-            SCREEN_RECORD_REQUEST_CODE,
-            null
-        )
+
     }
 
     fun stopRecordScreen() {
