@@ -1,6 +1,6 @@
 name: flutter_screen_recording_web
 description: Web platform implementation of flutter_screen_recording
-version: 1.0.5
+version: 1.0.8
 homepage: "https://github.com/Isvisoft/flutter_screen_recording"
 
 environment:
@@ -14,8 +14,7 @@ dependencies:
 
   flutter_web_plugins:
     sdk: flutter
-  js: ^0.6.3
-  platform_detect: ^2.0.0
+  js: ^0.7.1
 
 dev_dependencies:
   flutter_test:
