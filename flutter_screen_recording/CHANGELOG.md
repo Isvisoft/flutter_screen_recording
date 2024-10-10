@@ -1,3 +1,27 @@
+## 2.0.17
+
+- Update web lib
+
+## 2.0.16
+
+- Update audio codecs android
+
+## 2.0.15
+
+- try/catch control
+
+## 2.0.14
+
+- Bug fixed ios
+
+## 2.0.13
+
+- Bug fixed
+
+## 2.0.12
+
+- Bug fixed
+
 ## 2.0.11
 
 - Android v2 embedding

@@ -45,7 +45,23 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       if (recordAudio) {
         audioStream = await navigator.getUserMedia({"audio": true});
       }
-      stream = await navigator.getDisplayMedia({"audio": recordAudio, "video": recordVideo});
+      // stream = await navigator.getDisplayMedia({"audio": recordAudio, "video": recordVideo});
+
+      var options = {
+          "video": {
+            "displaySurface": 'browser',
+          },
+          "audio": {
+            "suppressLocalAudioPlayback": false,
+          },
+          "preferCurrentTab": true,
+          "selfBrowserSurface": 'include',
+          "systemAudio": 'include',
+          "surfaceSwitching": 'include',
+          "monitorTypeSurfaces": 'include',
+        };
+      stream = await navigator.getDisplayMedia(options);
+      // stream = await navigator.getDisplayMedia({"audio": recordAudio, "video": recordVideo});
       this.name = name;
       if (recordAudio) {
         stream!.addTrack(audioStream.getAudioTracks()[0]);
