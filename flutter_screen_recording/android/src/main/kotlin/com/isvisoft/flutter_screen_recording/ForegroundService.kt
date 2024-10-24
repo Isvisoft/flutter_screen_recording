@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.isvisoft.flutter_screen_recording.FlutterScreenRecordingPlugin
 import com.isvisoft.flutter_screen_recording.R
+import android.app.Activity
 
 class ForegroundService : Service() {
     private val CHANNEL_ID = "ForegroundService Kotlin"

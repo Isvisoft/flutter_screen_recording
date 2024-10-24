@@ -92,7 +92,7 @@ packages:
       path: "../flutter_screen_recording"
       relative: true
     source: path
-    version: "2.0.14"
+    version: "2.0.17"
   flutter_screen_recording_platform_interface:
     dependency: transitive
     description:
@@ -105,10 +105,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_screen_recording_web
-      sha256: dd4d59501c1947c882d061044f620e98c9b26fc7a8672a684fa91918edf2e9f8
+      sha256: bb19b3875e0d8ddfe009ed42086339f8016df05e685c37ff06cb56e165f2f7fa
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.5"
+    version: "1.0.8"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -123,10 +123,10 @@ packages:
     dependency: transitive
     description:
       name: js
-      sha256: f2c445dce49627136094980615a031419f7f3eb393237e4ecd97ac15dea343f3
+      sha256: c1b2e9b5ea78c45e1a0788d29606ba27dc5f71f019f32ca5140f61ef071838cf
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.7"
+    version: "0.7.1"
   leak_tracker:
     dependency: transitive
     description:
@@ -239,14 +239,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0"
-  platform_detect:
-    dependency: transitive
-    description:
-      name: platform_detect
-      sha256: "14afcb6ffcd93745e39a288db53d1d6522ea25d71f7993c13a367a86c437b54d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.7"
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -263,14 +255,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.4"
-  pub_semver:
-    dependency: transitive
-    description:
-      name: pub_semver
-      sha256: "40d3ab1bbd474c4c2328c91e3a7df8c6dd629b79ece4c4bd04bee496a224fb0c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.4"
   quiver:
     dependency: "direct main"
     description:
