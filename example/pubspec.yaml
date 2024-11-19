@@ -21,8 +21,8 @@ dev_dependencies:
     sdk: flutter
 
   flutter_foreground_task: ^6.0.0+1
-  permission_handler: ^6.0.1
-  open_file: ^3.0.1
+  permission_handler: ^11.3.1
+  open_file: ^3.5.10
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

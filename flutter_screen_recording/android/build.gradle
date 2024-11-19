@@ -21,6 +21,9 @@ rootProject.allprojects {
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
+        maven {
+            url "https://artifact.bytedance.com/repository/Volcengine/"
+        }
     }
 }
 
@@ -52,7 +55,12 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.github.HBiSoft:HBRecorder:2.0.5'
+
+
+    // Flutter dependencies
+    //compileOnly("io.flutter:flutter_embedding_debug:1.0.0-dbec018f4d83ae4b7b97eb8c5a066c61832e12df") // For debug
+    //compileOnly("io.flutter:flutter_embedding_release:1.0.0-dbec018f4d83ae4b7b97eb8c5a066c61832e12df") // For release
 
 }
