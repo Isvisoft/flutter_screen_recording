@@ -20,11 +20,8 @@ class _MyAppState extends State<MyApp> {
 
   requestPermissions() async {
     if (!kIsWeb) {
-      if (await Permission.storage.request().isDenied) {
-        await Permission.storage.request();
-      }
-      if (await Permission.photos.request().isDenied) {
-        await Permission.photos.request();
+      if (await Permission.notification.isDenied) {
+        await Permission.notification.request();
       }
       if (await Permission.microphone.request().isDenied) {
         await Permission.microphone.request();

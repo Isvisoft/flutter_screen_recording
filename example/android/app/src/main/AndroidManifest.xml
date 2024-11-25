@@ -5,11 +5,11 @@
         android:label="flutter_screen_recording_example"
         android:icon="@mipmap/ic_launcher">
 
-        <service
-            android:name="com.foregroundservice.ForegroundService"
-            android:foregroundServiceType="mediaProjection">
+<!--        <service-->
+<!--            android:name="com.foregroundservice.ForegroundService"-->
+<!--            android:foregroundServiceType="mediaProjection">-->
 
-        </service>
+<!--        </service>-->
 
         <activity
             android:name="io.flutter.embedding.android.FlutterActivity"
