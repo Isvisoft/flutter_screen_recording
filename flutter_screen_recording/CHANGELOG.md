@@ -1,3 +1,7 @@
+## 2.0.18
+
+- Fix Android 34 notification
+
 ## 2.0.17
 
 - Update web lib
