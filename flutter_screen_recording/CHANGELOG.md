@@ -1,3 +1,7 @@
+## 2.0.19
+
+- Fix Audio record in iOS
+
 ## 2.0.18
 
 - Fix Android 34 notification
