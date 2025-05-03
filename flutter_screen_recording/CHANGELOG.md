@@ -1,3 +1,7 @@
+## 2.0.22
+
+- Bug Fixed
+
 ## 2.0.21
 
 - Bug Fixed
