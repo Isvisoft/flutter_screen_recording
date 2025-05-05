@@ -1,3 +1,7 @@
+## 2.0.23
+
+- Update flutter_foreground_task
+
 ## 2.0.22
 
 - Bug Fixed

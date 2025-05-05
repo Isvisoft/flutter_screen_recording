@@ -90,7 +90,7 @@ class FlutterScreenRecording {
             playSound: false,
           ),
           foregroundTaskOptions: ForegroundTaskOptions(
-            // eventAction: ForegroundTaskEventAction.repeat(5000),
+            eventAction: ForegroundTaskEventAction.repeat(5000),
             autoRunOnBoot: true,
             autoRunOnMyPackageReplaced: true,
             allowWakeLock: true,
