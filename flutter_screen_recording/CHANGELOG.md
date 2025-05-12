@@ -1,3 +1,7 @@
+## 2.0.24
+
+- Refactor
+
 ## 2.0.23
 
 - Update flutter_foreground_task
