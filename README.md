@@ -1,51 +1,81 @@
 # flutter_screen_recording
 
-A new Flutter plugin for record the screen. This plug-in requires Android SDK 21+ and iOS 10+
+Flutter plugin to record the screen on Android, iOS, and web.
+
+Current platform support in this repository:
+
+- Android: `minSdkVersion 23`
+- iOS: `iOS 11.0+`
+- Web: supported through the federated web implementation
 
 ## Getting Started
 
-This plugin can be used for record the screen on Android and iOS devices.
-
-1. For start the recording
+Import the package:
 
 ```dart
-bool started = FlutterScreenRecording.startRecordScreen(videoName);
+import 'package:flutter_screen_recording/flutter_screen_recording.dart';
 ```
 
-Or
+Start screen recording:
 
 ```dart
-bool started = FlutterScreenRecording.startRecordScreenAndAudio(videoName);
+final bool started = await FlutterScreenRecording.startRecordScreen(
+  'my_recording',
+  titleNotification: 'Screen recording',
+  messageNotification: 'Recording in progress',
+);
 ```
 
-2. For stop the recording
+Start screen recording with microphone audio:
 
 ```dart
-String path = FlutterScreenRecording.stopRecordScreen;
+final bool started = await FlutterScreenRecording.startRecordScreenAndAudio(
+  'my_recording',
+  titleNotification: 'Screen recording',
+  messageNotification: 'Recording in progress',
+);
+```
+
+Stop recording and get the output path or file name:
+
+```dart
+final String path = await FlutterScreenRecording.stopRecordScreen;
 ```
 
 ## Android
 
-Flutter_Screen_Recorder do not request permissions necessary. You can use [Permission_handler](https://pub.dev/packages/permission_handler), a permissions plugin for Flutter.
-Require and add the following permissions in your manifest:
+The Android implementation uses `MediaProjection`, `MediaRecorder`, and a foreground service.
 
-```java
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.RECORD_AUDIO" />
-```
+- The plugin currently builds with `compileSdkVersion 35`
+- The plugin manifest already includes its service declaration and required foreground-service permissions
+- If you record audio, request microphone permission at runtime in your app
+- On modern Android versions, you may also need notification permission for the foreground service notification
 
-In the last Android version is requiered use a foreground service for record the screen, we added the [flutter foreground plugin](https://pub.dev/packages/flutter_foreground_plugin).
+The example app requests permissions with `permission_handler` before starting recording.
 
 ## iOS
 
-You only need add the permission message on the Info.plist
+The iOS implementation uses `ReplayKit` and requires `iOS 11.0+`.
 
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Save video in gallery</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Save audio in video</string>
+Add the usage description for microphone access if you record audio:
 
-## WEB
+```xml
+<key>NSMicrophoneUsageDescription</key>
+<string>Save audio in video</string>
+```
 
-Just use it
+The plugin returns the local output file path. If your app later saves the file to the Photos library, also add the appropriate Photos usage description to your app.
+
+## Web
+
+The web implementation uses `getDisplayMedia` and `MediaRecorder`.
+
+- Best experience is on modern desktop browsers
+- Browser support depends on screen-capture and codec support
+- The web implementation downloads the recorded file in the browser when recording stops
+
+## Notes
+
+- This package exposes asynchronous APIs; use `await` when starting and stopping recordings
+- Notification title and message parameters are used by the Android implementation
+- Returned output differs by platform: native platforms return a local path, while web triggers a browser download
