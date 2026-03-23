@@ -24,6 +24,10 @@ dev_dependencies:
   permission_handler: ^11.3.1
   open_file: ^3.5.10
 
+dependency_overrides:
+  flutter_screen_recording_web:
+    path: ../flutter_screen_recording_web
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

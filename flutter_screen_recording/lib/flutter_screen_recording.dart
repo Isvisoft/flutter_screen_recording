@@ -16,7 +16,9 @@ class FlutterScreenRecording {
         messageNotification = "";
       }
 
-      await _maybeStartFGS(titleNotification, messageNotification);
+      if (!kIsWeb) {
+        _maybeStartFGS(titleNotification, messageNotification);
+      }
       final bool start = await FlutterScreenRecordingPlatform.instance.startRecordScreen(
         name,
         notificationTitle: titleNotification,
@@ -32,8 +34,7 @@ class FlutterScreenRecording {
     return false;
   }
 
-  static Future<bool> startRecordScreenAndAudio(String name,
-      {String? titleNotification, String? messageNotification}) async {
+  static Future<bool> startRecordScreenAndAudio(String name, {String? titleNotification, String? messageNotification}) async {
     try {
       if (titleNotification == null) {
         titleNotification = "";
@@ -41,7 +42,9 @@ class FlutterScreenRecording {
       if (messageNotification == null) {
         messageNotification = "";
       }
-      await _maybeStartFGS(titleNotification, messageNotification);
+      if (!kIsWeb) {
+        _maybeStartFGS(titleNotification, messageNotification);
+      }
       final bool start = await FlutterScreenRecordingPlatform.instance.startRecordScreenAndAudio(
         name,
         notificationTitle: titleNotification,
