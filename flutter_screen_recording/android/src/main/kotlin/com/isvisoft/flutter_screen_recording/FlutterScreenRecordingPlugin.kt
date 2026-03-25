@@ -55,18 +55,31 @@ class FlutterScreenRecordingPlugin :
     private var recordAudio: Boolean? = false;
     private val SCREEN_RECORD_REQUEST_CODE = 333
 
-    private lateinit var _result: Result
+    private var pendingResult: Result? = null
 
     private var pluginBinding: FlutterPlugin.FlutterPluginBinding? = null
     private var activityBinding: ActivityPluginBinding? = null
 
     private var serviceConnection: ServiceConnection? = null
 
+    private fun completePendingResult(value: Boolean) {
+        pendingResult?.success(value)
+        pendingResult = null
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
 
         val context = pluginBinding!!.applicationContext
         
         if (requestCode == SCREEN_RECORD_REQUEST_CODE) {
+            if (pendingResult == null) {
+                Log.w("ScreenRecordingPlugin", "Ignoring activity result with no pending callback")
+                if (resultCode != Activity.RESULT_OK) {
+                    ForegroundService.stopService(context)
+                }
+                return true
+            }
+
             if (resultCode == Activity.RESULT_OK) {
 
                 ForegroundService.startService(context, mTitle, mMessage)
@@ -82,13 +95,13 @@ class FlutterScreenRecordingPlugin :
                             mMediaProjection = mProjectionManager.getMediaProjection(resultCode, data!!)
                             mMediaProjection?.registerCallback(mMediaProjectionCallback!!, null)
                             mVirtualDisplay = createVirtualDisplay()
-                            _result.success(true)
+                            completePendingResult(true)
 
                         } catch (e: Throwable) {
                             e.message?.let {
                                 Log.e("ScreenRecordingPlugin", it)
                             }
-                            _result.success(false)
+                            completePendingResult(false)
                         }
                     }
 
@@ -96,11 +109,15 @@ class FlutterScreenRecordingPlugin :
                     }
                 }
 
-                context.bindService(intentConnection, serviceConnection!!, Activity.BIND_AUTO_CREATE)
+                val isBound = context.bindService(intentConnection, serviceConnection!!, Activity.BIND_AUTO_CREATE)
+                if (!isBound) {
+                    ForegroundService.stopService(context)
+                    completePendingResult(false)
+                }
 
             } else {
                 ForegroundService.stopService(context)
-                _result.success(false)
+                completePendingResult(false)
             }
             return true
         }
@@ -112,9 +129,17 @@ class FlutterScreenRecordingPlugin :
 
         when (call.method) {
             "startRecordScreen" -> {
+                if (pendingResult != null) {
+                    result.error(
+                        "already_pending",
+                        "A screen recording request is already pending.",
+                        null
+                    )
+                    return
+                }
 
                 try {
-                    _result = result
+                    pendingResult = result
                     val title = call.argument<String?>("title")
                     val message = call.argument<String?>("message")
 
@@ -152,6 +177,7 @@ class FlutterScreenRecordingPlugin :
                 } catch (e: Exception) {
                     println("Error onMethodCall startRecordScreen")
                     println(e.message)
+                    pendingResult = null
                     result.success(false)
                 }
             }
