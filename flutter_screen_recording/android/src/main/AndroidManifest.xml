@@ -5,10 +5,8 @@
 	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 	<uses-permission android:name="android.permission.RECORD_AUDIO" />
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-	<!-- Agregar el permiso requerido para Android 14 -->
-	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
 	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 	<application>
-		<service android:name=".ForegroundService" android:foregroundServiceType="mediaProjection" android:permission="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+		<service android:name=".ForegroundService" android:foregroundServiceType="mediaProjection" />
 	</application>
 </manifest>
