@@ -1,3 +1,7 @@
+## 2.0.25
+
+- Fix android lateinit
+
 ## 2.0.24
 
 - Refactor
