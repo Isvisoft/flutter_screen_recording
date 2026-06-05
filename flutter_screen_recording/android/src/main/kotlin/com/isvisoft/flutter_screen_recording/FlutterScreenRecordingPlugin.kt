@@ -157,9 +157,6 @@ class FlutterScreenRecordingPlugin :
                         val display = activityBinding!!.activity.display
                         display?.getRealMetrics(metrics)
                     } else {
-//                        @SuppressLint("NewApi")
-//                        val defaultDisplay = appContext.display
-//                        defaultDisplay?.getMetrics(metrics)
                         @Suppress("DEPRECATION")
                         val defaultDisplay = activityBinding!!.activity.windowManager.defaultDisplay
                         @Suppress("DEPRECATION")
@@ -211,14 +208,11 @@ class FlutterScreenRecordingPlugin :
 
     private fun calculateResolution(metrics: DisplayMetrics) {
         // Use the real physical pixel size of the device display.
-        // Do NOT downscale to any fixed maximum and do NOT use Flutter logical pixels.
-        // This keeps the original aspect ratio and avoids cropping because the
-        // exact same width/height are reused for MediaRecorder and the VirtualDisplay.
         mDisplayWidth = metrics.widthPixels
         mDisplayHeight = metrics.heightPixels
 
         // Some encoders require even dimensions; round down to the nearest even number.
-        // This does not change the aspect ratio in any meaningful way and does not crop.
+        // Should not change the aspect ratio in any meaningful way and does not crop.
         if (mDisplayWidth % 2 != 0) {
             mDisplayWidth -= 1
         }
