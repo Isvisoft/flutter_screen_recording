@@ -29,10 +29,10 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 
 
-class FlutterScreenRecordingPlugin : 
-    MethodCallHandler, 
+class FlutterScreenRecordingPlugin :
+    MethodCallHandler,
     PluginRegistry.ActivityResultListener,
-    FlutterPlugin, 
+    FlutterPlugin,
     ActivityAware {
 
     private var mScreenDensity: Int = 0
@@ -70,7 +70,7 @@ class FlutterScreenRecordingPlugin :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
 
         val context = pluginBinding!!.applicationContext
-        
+
         if (requestCode == SCREEN_RECORD_REQUEST_CODE) {
             if (pendingResult == null) {
                 Log.w("ScreenRecordingPlugin", "Ignoring activity result with no pending callback")
@@ -157,9 +157,13 @@ class FlutterScreenRecordingPlugin :
                         val display = activityBinding!!.activity.display
                         display?.getRealMetrics(metrics)
                     } else {
-                        @SuppressLint("NewApi")
-                        val defaultDisplay = appContext.display
-                        defaultDisplay?.getMetrics(metrics)
+//                        @SuppressLint("NewApi")
+//                        val defaultDisplay = appContext.display
+//                        defaultDisplay?.getMetrics(metrics)
+                        @Suppress("DEPRECATION")
+                        val defaultDisplay = activityBinding!!.activity.windowManager.defaultDisplay
+                        @Suppress("DEPRECATION")
+                        defaultDisplay?.getRealMetrics(metrics)
                     }
                     mScreenDensity = metrics.densityDpi
                     calculateResolution(metrics)
@@ -181,6 +185,7 @@ class FlutterScreenRecordingPlugin :
                     result.success(false)
                 }
             }
+
             "stopRecordScreen" -> {
                 try {
                     serviceConnection?.let {
@@ -197,6 +202,7 @@ class FlutterScreenRecordingPlugin :
                     result.success("")
                 }
             }
+
             else -> {
                 result.notImplemented()
             }
@@ -204,39 +210,38 @@ class FlutterScreenRecordingPlugin :
     }
 
     private fun calculateResolution(metrics: DisplayMetrics) {
-
-        mDisplayHeight = metrics.heightPixels
+        // Use the real physical pixel size of the device display.
+        // Do NOT downscale to any fixed maximum and do NOT use Flutter logical pixels.
+        // This keeps the original aspect ratio and avoids cropping because the
+        // exact same width/height are reused for MediaRecorder and the VirtualDisplay.
         mDisplayWidth = metrics.widthPixels
+        mDisplayHeight = metrics.heightPixels
 
-        var maxRes = 1280.0;
-        if (metrics.scaledDensity >= 3.0f) {
-            maxRes = 1920.0;
+        // Some encoders require even dimensions; round down to the nearest even number.
+        // This does not change the aspect ratio in any meaningful way and does not crop.
+        if (mDisplayWidth % 2 != 0) {
+            mDisplayWidth -= 1
         }
-        if (metrics.widthPixels > metrics.heightPixels) {
-            var rate = metrics.widthPixels / maxRes
-
-            if (rate > 1.5) {
-                rate = 1.5
-            }
-            mDisplayWidth = maxRes.toInt()
-            mDisplayHeight = (metrics.heightPixels / rate).toInt()
-            println("Rate : $rate")
-        } else {
-            var rate = metrics.heightPixels / maxRes
-            if (rate > 1.5) {
-                rate = 1.5
-            }
-            mDisplayHeight = maxRes.toInt()
-            mDisplayWidth = (metrics.widthPixels / rate).toInt()
-            println("Rate : $rate")
+        if (mDisplayHeight % 2 != 0) {
+            mDisplayHeight -= 1
         }
 
-        println("Scaled Density")
-        println(metrics.scaledDensity)
-        println("Original Resolution ")
+        println("Density Dpi")
+        println(metrics.densityDpi)
+        println("Physical Resolution")
         println(metrics.widthPixels.toString() + " x " + metrics.heightPixels)
-        println("Calcule Resolution ")
+        println("Recording Resolution")
         println("$mDisplayWidth x $mDisplayHeight")
+    }
+
+    private fun calculateBitrate(width: Int, height: Int): Int {
+        // Choose the bitrate dynamically based on total pixel count.
+        val pixels = width.toLong() * height.toLong()
+        return when {
+            pixels >= 3_000_000L -> 20_000_000 // 20 Mbps for 3M+ pixels
+            pixels >= 2_000_000L -> 14_000_000 // 14 Mbps for 2M+ pixels
+            else -> 8_000_000                  // 8 Mbps otherwise
+        }
     }
 
     private fun startRecordScreen() {
@@ -272,7 +277,7 @@ class FlutterScreenRecordingPlugin :
             mMediaRecorder?.setOutputFile(mFileName)
             mMediaRecorder?.setVideoSize(mDisplayWidth, mDisplayHeight)
             mMediaRecorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
-            mMediaRecorder?.setVideoEncodingBitRate(5 * mDisplayWidth * mDisplayHeight)
+            mMediaRecorder?.setVideoEncodingBitRate(calculateBitrate(mDisplayWidth, mDisplayHeight))
             mMediaRecorder?.setVideoFrameRate(30)
 
             mMediaRecorder?.prepare()
