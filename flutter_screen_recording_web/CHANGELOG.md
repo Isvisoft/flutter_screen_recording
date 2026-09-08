@@ -1,3 +1,12 @@
+## Unreleased
+
+* Prefer native MP4 recording (H.264/AAC when supported), with capability-based
+  WebM fallback and exact MIME/codec checks for streams with and without audio.
+* Match download filenames and stop results to the actual MP4 or WebM container.
+* Retain all recording chunks and release capture tracks after failed starts.
+* Handle browser-initiated and repeated stops without duplicate downloads.
+* Add format-selection and filename regression tests.
+
 ## 1.0.8
 
 \*Update dependencies

@@ -2,19 +2,24 @@ library flutter_screen_recording_web;
 
 import 'dart:async';
 import 'dart:html';
-import 'dart:js';
-
-import 'interop/get_display_media.dart';
 
 import 'package:flutter_screen_recording_platform_interface/flutter_screen_recording_platform_interface.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+
+import 'interop/get_display_media.dart';
+import 'src/recording_format.dart';
 
 class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
   MediaStream? stream;
   String? name;
   MediaRecorder? mediaRecorder;
-  Blob? recordedChunks;
   String? mimeType;
+
+  final List<Blob> _recordedChunks = <Blob>[];
+  MediaStream? _audioStream;
+  Completer<String>? _stopCompleter;
+  bool _starting = false;
+  bool _recordingFailed = false;
 
   static registerWith(Registrar registrar) {
     FlutterScreenRecordingPlatform.instance = WebFlutterScreenRecording();
@@ -26,7 +31,7 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
     String notificationTitle = "",
     String notificationMessage = "",
   }) async {
-    return _record(name, true, false);
+    return _record(name, false);
   }
 
   @override
@@ -35,13 +40,20 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
     String notificationTitle = "",
     String notificationMessage = "",
   }) async {
-    return _record(name, true, true);
+    return _record(name, true);
   }
 
-  Future<bool> _record(String name, bool recordVideo, bool recordAudio) async {
-    try {
-      var audioStream;
+  Future<bool> _record(String name, bool recordAudio) async {
+    if (_starting || mediaRecorder != null) {
+      return false;
+    }
+    _starting = true;
+    _recordedChunks.clear();
+    _stopCompleter = null;
+    _recordingFailed = false;
+    mimeType = null;
 
+    try {
       final captureOptions = [
         {
           "video": {
@@ -72,81 +84,152 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       }
 
       if (recordAudio) {
-        audioStream = await navigator.getUserMedia({"audio": true});
-        if (audioStream.getAudioTracks().isNotEmpty) {
-          stream!.addTrack(audioStream.getAudioTracks()[0]);
+        _audioStream = await navigator.getUserMedia({"audio": true});
+        final audioTracks = _audioStream!.getAudioTracks();
+        if (audioTracks.isNotEmpty) {
+          stream!.addTrack(audioTracks.first);
         }
       }
 
       this.name = name;
+      final recorder = _startRecorder(stream!);
+      mediaRecorder = recorder;
+      _stopCompleter = Completer<String>();
 
-      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
-        print('video/webm;codecs=vp9');
-        mimeType = 'video/webm;codecs=vp9,opus';
-      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8.0')) {
-        print('video/webm;codecs=vp8.0');
-        mimeType = 'video/webm;codecs=vp8.0,opus';
-      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
-        print('video/webm;codecs=vp8');
-        mimeType = 'video/webm;codecs=vp8,opus';
-      } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h265')) {
-        mimeType = 'video/mp4;codecs=h265,opus';
-        print("video/mp4;codecs=h265");
-      } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264')) {
-        print("video/mp4;codecs=h264");
-        mimeType = 'video/mp4;codecs=h264,opus';
-      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=h265')) {
-        print("video/webm;codecs=h265");
-        mimeType = 'video/webm;codecs=h265,opus';
-      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=h264')) {
-        print("video/webm;codecs=h264");
-        mimeType = 'video/webm;codecs=h264,opus';
-      } else {
-        mimeType = 'video/webm';
-      }
-
-      this.mediaRecorder = new MediaRecorder(stream!, {'mimeType': mimeType});
-
-      this.mediaRecorder!.addEventListener('dataavailable', (Event event) {
-        print("datavailable ${event.runtimeType}");
-        recordedChunks = JsObject.fromBrowserObject(event)['data'];
-        this.mimeType = mimeType;
-        print("blob size: ${recordedChunks?.size ?? 'empty'}");
+      // Register now, rather than only when stopRecordScreen is called: the
+      // browser can also stop the recorder when screen sharing ends.
+      recorder.addEventListener('stop', (Event event) {
+        _finishRecording(recorder);
       });
-
-      this.stream!.getVideoTracks()[0].addEventListener('ended', (Event event) {
-        //If user stop sharing screen, stop record
-        stopRecordScreen;
+      recorder.addEventListener('error', (Event event) {
+        if (identical(mediaRecorder, recorder)) {
+          _recordingFailed = true;
+          print('Screen recording failed: $event');
+        }
       });
-
-      this.mediaRecorder!.start();
+      stream!.getVideoTracks().first.addEventListener('ended', (Event event) {
+        if (identical(mediaRecorder, recorder)) {
+          stopRecordScreen;
+        }
+      });
 
       return true;
     } catch (e) {
-      print("--->$e");
+      _releaseStreams();
+      mediaRecorder = null;
+      _recordedChunks.clear();
+      print('Unable to start screen recording: $e');
       return false;
+    } finally {
+      _starting = false;
     }
+  }
+
+  MediaRecorder _startRecorder(MediaStream recordingStream) {
+    return createRecorderForSupportedFormat<MediaRecorder>(
+      hasAudio: recordingStream.getAudioTracks().isNotEmpty,
+      isTypeSupported: MediaRecorder.isTypeSupported,
+      createAndStart: (requestedMimeType) {
+        final recorder = MediaRecorder(
+          recordingStream,
+          {'mimeType': requestedMimeType},
+        );
+        void onData(Event event) {
+          final chunk = (event as BlobEvent).data;
+          if (chunk == null) {
+            return;
+          }
+          if (chunk.size > 0) {
+            _recordedChunks.add(chunk);
+          }
+          // The browser may refine a generic MIME type after recording starts.
+          if (chunk.type.isNotEmpty) {
+            mimeType = chunk.type;
+          }
+        }
+
+        recorder.addEventListener('dataavailable', onData);
+        try {
+          recorder.start();
+        } catch (e) {
+          recorder.removeEventListener('dataavailable', onData);
+          if (recorder.state != 'inactive') {
+            recorder.stop();
+          }
+          rethrow;
+        }
+        final actualMimeType = recorder.mimeType;
+        mimeType = actualMimeType != null && actualMimeType.isNotEmpty
+            ? actualMimeType
+            : requestedMimeType;
+        return recorder;
+      },
+    );
   }
 
   @override
   Future<String> get stopRecordScreen {
-    final c = new Completer<String>();
-    this.mediaRecorder!.addEventListener("stop", (event) {
-      mediaRecorder = null;
-      this.stream!.getTracks().forEach((element) => element.stop());
-      this.stream = null;
-      final a = document.createElement("a") as AnchorElement;
-      final url = Url.createObjectUrl(new Blob(List<dynamic>.from([recordedChunks]), mimeType));
-      document.body!.append(a);
-      a.style.display = "none";
-      a.href = url;
-      a.download = this.name;
-      a.click();
-      Url.revokeObjectUrl(url);
+    final completer = _stopCompleter;
+    final recorder = mediaRecorder;
+    if (completer == null) {
+      return Future<String>.value('');
+    }
+    if (recorder != null && recorder.state != 'inactive') {
+      try {
+        recorder.stop();
+      } catch (e) {
+        _recordingFailed = true;
+        print('Unable to stop screen recording: $e');
+        _finishRecording(recorder);
+      }
+    }
+    return completer.future;
+  }
 
-      c.complete(this.name);
-    });
-    mediaRecorder!.stop();
-    return c.future;
+  void _finishRecording(MediaRecorder recorder) {
+    final completer = _stopCompleter;
+    if (!identical(mediaRecorder, recorder) ||
+        completer == null ||
+        completer.isCompleted) {
+      return;
+    }
+
+    try {
+      if (_recordingFailed || _recordedChunks.isEmpty) {
+        completer.complete('');
+        return;
+      }
+      final actualMimeType = mimeType ?? recorder.mimeType ?? '';
+      final fileName = recordingFileName(name!, actualMimeType);
+      final blob = Blob(_recordedChunks, actualMimeType);
+      final url = Url.createObjectUrl(blob);
+      final anchor = AnchorElement(href: url)
+        ..style.display = 'none'
+        ..download = fileName;
+      try {
+        document.body!.append(anchor);
+        anchor.click();
+      } finally {
+        anchor.remove();
+        // Let the browser consume the download URL before revoking it.
+        Timer(const Duration(seconds: 1), () => Url.revokeObjectUrl(url));
+      }
+      name = fileName;
+      completer.complete(fileName);
+    } catch (e) {
+      print('Unable to download screen recording: $e');
+      completer.complete('');
+    } finally {
+      _releaseStreams();
+      mediaRecorder = null;
+      _recordedChunks.clear();
+    }
+  }
+
+  void _releaseStreams() {
+    stream?.getTracks().forEach((track) => track.stop());
+    _audioStream?.getTracks().forEach((track) => track.stop());
+    stream = null;
+    _audioStream = null;
   }
 }
