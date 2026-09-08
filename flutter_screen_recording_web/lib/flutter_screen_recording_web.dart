@@ -79,38 +79,13 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       }
 
       this.name = name;
-
-      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
-        print('video/webm;codecs=vp9');
-        mimeType = 'video/webm;codecs=vp9,opus';
-      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8.0')) {
-        print('video/webm;codecs=vp8.0');
-        mimeType = 'video/webm;codecs=vp8.0,opus';
-      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
-        print('video/webm;codecs=vp8');
-        mimeType = 'video/webm;codecs=vp8,opus';
-      } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h265')) {
-        mimeType = 'video/mp4;codecs=h265,opus';
-        print("video/mp4;codecs=h265");
-      } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264')) {
-        print("video/mp4;codecs=h264");
-        mimeType = 'video/mp4;codecs=h264,opus';
-      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=h265')) {
-        print("video/webm;codecs=h265");
-        mimeType = 'video/webm;codecs=h265,opus';
-      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=h264')) {
-        print("video/webm;codecs=h264");
-        mimeType = 'video/webm;codecs=h264,opus';
-      } else {
-        mimeType = 'video/webm';
-      }
+      mimeType = _getSupportedMimeType();
 
       this.mediaRecorder = new MediaRecorder(stream!, {'mimeType': mimeType});
 
       this.mediaRecorder!.addEventListener('dataavailable', (Event event) {
         print("datavailable ${event.runtimeType}");
         recordedChunks = JsObject.fromBrowserObject(event)['data'];
-        this.mimeType = mimeType;
         print("blob size: ${recordedChunks?.size ?? 'empty'}");
       });
 
@@ -128,6 +103,37 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
     }
   }
 
+  String _getSupportedMimeType() {
+    const preferredMimeTypes = [
+      'video/mp4',
+      'video/webm;codecs=vp9',
+      'video/webm;codecs=vp8',
+      'video/webm;codecs=h264',
+      'video/webm',
+    ];
+
+    for (final type in preferredMimeTypes) {
+      if (MediaRecorder.isTypeSupported(type)) {
+        print(type);
+        return type;
+      }
+    }
+
+    return 'video/webm';
+  }
+
+  String _getDownloadName() {
+    final currentName = name?.isNotEmpty == true ? name! : 'recording';
+    final extension = mimeType?.startsWith('video/mp4') == true ? '.mp4' : '.webm';
+    final lowerName = currentName.toLowerCase();
+
+    if (lowerName.endsWith('.mp4') || lowerName.endsWith('.webm')) {
+      return '${currentName.substring(0, currentName.lastIndexOf('.'))}$extension';
+    }
+
+    return '$currentName$extension';
+  }
+
   @override
   Future<String> get stopRecordScreen {
     final c = new Completer<String>();
@@ -137,14 +143,15 @@ class WebFlutterScreenRecording extends FlutterScreenRecordingPlatform {
       this.stream = null;
       final a = document.createElement("a") as AnchorElement;
       final url = Url.createObjectUrl(new Blob(List<dynamic>.from([recordedChunks]), mimeType));
+      final downloadName = _getDownloadName();
       document.body!.append(a);
       a.style.display = "none";
       a.href = url;
-      a.download = this.name;
+      a.download = downloadName;
       a.click();
       Url.revokeObjectUrl(url);
 
-      c.complete(this.name);
+      c.complete(downloadName);
     });
     mediaRecorder!.stop();
     return c.future;
