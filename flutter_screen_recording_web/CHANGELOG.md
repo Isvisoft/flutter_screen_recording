@@ -1,35 +1,41 @@
+## Unreleased
+
+* Prefer MP4 recording on web when the browser supports `video/mp4`
+* Fall back to WebM when MP4 recording is unavailable
+* Use the file extension that matches the recorded web format
+
 ## 1.0.8
 
-\*Update dependencies
+*Update dependencies
 
 ## 1.0.7
 
-\*Bug fixed
+*Bug fixed
 
 ## 1.0.6
 
-\*Bug fixed
+*Bug fixed
 
 ## 1.0.5
 
-\*Update interface
+*Update interface
 
 ## 1.0.4
 
-\*Bug fixed
+*Bug fixed
 
 ## 1.0.3
 
-\*Null safety
+*Null safety
 
 ## 1.0.2
 
-\*Reorder codecs
+*Reorder codecs
 
 ## 1.0.1
 
-\*Change dependencies
+*Change dependencies
 
 ## 1.0.0
 
-\*Initial release.
+*Initial release.
