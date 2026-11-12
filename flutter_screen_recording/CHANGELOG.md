@@ -1,4 +1,4 @@
-## Pendiente de publicación
+## 2.0.26
 
 - Sustituye JCenter por Maven Central y alinea Android con AGP 9.1.1, Kotlin 2.4.21 y Gradle 9.3.1.
 - Adapta el plugin a Kotlin integrado y compilerOptions, con destino Java/Kotlin 17. Requiere Flutter 3.44 o posterior; el ejemplo mantiene el modo de compatibilidad por sus dependencias antiguas.
