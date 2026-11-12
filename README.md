@@ -72,6 +72,8 @@ The web implementation uses `getDisplayMedia` and `MediaRecorder`.
 
 - Best experience is on modern desktop browsers
 - Browser support depends on screen-capture and codec support
+- MP4 is preferred when the browser reports `video/mp4` recording support; WebM is used as a fallback
+- The downloaded file receives the extension that matches the format actually recorded (`.mp4` or `.webm`)
 - The web implementation downloads the recorded file in the browser when recording stops
 
 ## Notes

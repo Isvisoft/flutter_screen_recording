@@ -1,6 +1,12 @@
 ## 1.0.9
 
+<<<<<<< HEAD
 \*Tab fix
+=======
+- Prefer MP4 recording on web when the browser supports `video/mp4`
+- Fall back to WebM when MP4 recording is unavailable
+- Use the file extension that matches the recorded web format
+>>>>>>> ba2560fa9771814529847cbc8731cf168ef0b6b7
 
 ## 1.0.8
 
